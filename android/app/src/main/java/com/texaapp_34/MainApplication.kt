@@ -1,6 +1,7 @@
 package com.texaapp_34
 
 import android.app.Application
+import com.vinzscam.reactnativefileviewer.RNFileViewerPackage
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -20,6 +21,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              RNFileViewerPackage()
             }
 
         override fun getJSMainModuleName(): String = "index"

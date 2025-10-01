@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "476858224533",
+    "project_id": "texa-app-61ec3",
+    "storage_bucket": "texa-app-61ec3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476858224533:android:f7071e68d4cbfb98e8309c",
+        "android_client_info": {
+          "package_name": "com.texa_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6VOjHy2w25YtyS8_pqZHU4aR-sKCb5VY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
