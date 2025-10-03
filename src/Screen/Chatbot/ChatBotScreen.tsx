@@ -7,7 +7,9 @@ import {
   ScrollView,
   StyleSheet,
   KeyboardAvoidingView,
-  Image
+  Image,
+  SafeAreaView,
+  Platform
 } from 'react-native';
 import CustomHeader from '../CustomHeader/CustomHeader';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -247,7 +249,7 @@ export default function ChatBotScreen({ route }) {
       } catch (error: any) {
         setIsLoading(false);
         if (error.response) {
-          console.error("🔴 Backend Response Error:", error.response.data);
+          console.error("🔴 Backend Response chat Error:", error.response.data);
           console.error("🔴 Status Code:", error.response.status);
           console.error("🔴 Headers:", error.response.headers);
         } else if (error.request) {
@@ -264,7 +266,7 @@ export default function ChatBotScreen({ route }) {
 
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+    <SafeAreaView style={{ flex: 1 }} >
       <CustomHeader title="Texa Chatbot" imgSource={require('../../assets/img/profile_img.png')} />
       <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 20 }} ref={scrollRef}>
         {chatHistory.map((msg, index) => (
@@ -327,7 +329,7 @@ export default function ChatBotScreen({ route }) {
       )}
      
       <Loader loading={isLoading} />
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -343,7 +345,16 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
 
-  input: { flex: 1, borderWidth: 1,color: "#000",
-  borderColor: '#ccc', borderRadius: 20, paddingHorizontal: 15 },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    color: "#000",
+    borderColor: '#ccc',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8, // iOS ke liye thoda zyada
+    fontSize: 16,
+  },
+  
   sendBtn: { backgroundColor: '#4CAF50', paddingHorizontal: 15, justifyContent: 'center', marginLeft: 5, borderRadius: 20 }
 });
