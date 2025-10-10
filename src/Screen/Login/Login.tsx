@@ -16,6 +16,7 @@ import {
   Platform,
   PermissionsAndroid,
   Linking,
+  KeyboardAvoidingView,
 
 } from 'react-native';
 import styles from './Styles';
@@ -34,6 +35,7 @@ import Loader from '../../components/Loader';
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
 import SuccessMessage from '../../components/Common/CustomTostMessage';
 import messaging from '@react-native-firebase/messaging';
+import { handleApiError } from '../utils/handleApiError';
 
 
 
@@ -62,7 +64,7 @@ const Login: React.FC<loginprops> = (props) => {
     };
     init();
   }, []);
-  
+
 
   const checksaveCredentials = async () => {
     try {
@@ -91,26 +93,26 @@ const Login: React.FC<loginprops> = (props) => {
   };
 
 
-    // Get the device token
-    const getDeviceToken = async () => {
-      let deviceToken = '';
-      try {
-          deviceToken = await messaging().getToken();
-          console.log(deviceToken);
-      } catch (error) {
-          console.error('Error getting device token:', error);
-      }
-      return deviceToken;
+  // Get the device token
+  const getDeviceToken = async () => {
+    let deviceToken = '';
+    try {
+      deviceToken = await messaging().getToken();
+      console.log(deviceToken);
+    } catch (error) {
+      console.error('Error getting device token:', error);
+    }
+    return deviceToken;
   };
 
 
-  const requestUserPermission=async()=>{
+  const requestUserPermission = async () => {
     if (Platform.OS === 'ios') {
       const authStatus = await messaging().requestPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
+
       if (!enabled) {
         Alert.alert(
           'Notification Permission',
@@ -128,7 +130,7 @@ const Login: React.FC<loginprops> = (props) => {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
         );
-  
+
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           Alert.alert(
             'Notification Disabled',
@@ -166,7 +168,7 @@ const Login: React.FC<loginprops> = (props) => {
     const credentials = {
       email: email,
       password: password,
-      device_token:deviceToken?deviceToken:"IosdeviceToken",
+      device_token: deviceToken ? deviceToken : "IosdeviceToken",
     }
 
     try {
@@ -193,8 +195,6 @@ const Login: React.FC<loginprops> = (props) => {
 
         // dispatch(setUser(response.data.data.user))
         const token = response.data.data.token;
-        console.log(token)
-
         const userresponse = await api.get_user(token)
         if (userresponse.data.status === "success") {
           SuccessMessage({
@@ -217,14 +217,16 @@ const Login: React.FC<loginprops> = (props) => {
 
     } catch (error) {
       setIsLoading(false)
-      console.error("error:",error)
+      // handleApiError(error, "login War!:")
+
+
       const axioserror = error as AxiosError;
       if (axioserror.response && axioserror.response.status === 400) {
         setModalMessage(axioserror.response.data.message);
         setModalVisible(true);
         return
-       
-      } else if(axioserror.response && axioserror.response.status === 404) {
+
+      } else if (axioserror.response && axioserror.response.status === 404) {
         setModalMessage(axioserror.response.data.message);
         setModalVisible(true);
         return
@@ -303,77 +305,82 @@ const Login: React.FC<loginprops> = (props) => {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <ScrollView keyboardShouldPersistTaps="handled">
-          {/* <Image source={require('../../assets/img/food.jpeg')} style={style.loginimg}/> */}
-          <View style={{ alignItems: "center" }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
+          <ScrollView keyboardShouldPersistTaps="handled" >
+            <View style={{ alignItems: "center" }}>
 
-            <Text style={styles.title}>T E X A</Text>
-            <Text style={styles.title2}>Login to your account</Text>
-          </View>
+              <Text style={styles.title}>T E X A</Text>
+              <Text style={styles.title2}>Login to your account</Text>
+            </View>
 
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.inputText}
-              autoCapitalize='none'
-              autoCorrect={false}
-              value={email}
-              placeholder="Enter Your Email"
-              placeholderTextColor={"#787a7c"}
-              onChangeText={(email) => setEmail(email)} />
-          </View>
-          <View style={styles.inputView}>
-            <TextInput placeholder="Enter Your Password" style={styles.psswordtextinput}
-              autoCapitalize='none'
-              autoCorrect={false}
-              value={password}
-              placeholderTextColor={"#787a7c"}
-              secureTextEntry={!showPassword}
-              onChangeText={(password) => setPassword(password)} />
-            <MaterialCommunityIcons
-              name={showPassword ? 'eye-off' : 'eye'}
-              size={24}
-              color="#aaa"
-              style={styles.icon}
-              onPress={() => setShowPassword(!showPassword)}
-            />
-          </View>
-          <View style={styles.forgotmainContainer}>
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.inputText}
+                autoCapitalize='none'
+                autoCorrect={false}
+                value={email}
+                placeholder="Enter Your Email"
+                placeholderTextColor={"#787a7c"}
+                onChangeText={(email) => setEmail(email)} />
+            </View>
+            <View style={styles.inputView}>
+              <TextInput placeholder="Enter Your Password" style={styles.psswordtextinput}
+                autoCapitalize='none'
+                autoCorrect={false}
+                value={password}
+                placeholderTextColor={"#787a7c"}
+                secureTextEntry={!showPassword}
+                onChangeText={(password) => setPassword(password)} />
+              <MaterialCommunityIcons
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={24}
+                color="#aaa"
+                style={styles.icon}
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            </View>
+            <View style={styles.forgotmainContainer}>
 
-            <AgreeCheckbox label="Remember me" onChange={handleCheckboxChange} />
+              <AgreeCheckbox label="Remember me" onChange={handleCheckboxChange} />
+              <TouchableOpacity
+                style={styles.forgotContainer}
+                onPress={onPressForgotPassword}>
+                <Text style={styles.forgotAndSignUpText}>Forgot Password?</Text>
+              </TouchableOpacity>
+
+
+
+            </View>
+
+
             <TouchableOpacity
-              style={styles.forgotContainer}
-              onPress={onPressForgotPassword}>
-              <Text style={styles.forgotAndSignUpText}>Forgot Password?</Text>
+              onPress={handleLogin}
+              style={styles.loginBtn}>
+              <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
+            <View style={{ alignItems: "center", }}>
+              <Text style={styles.ortext}>------- or -------</Text>
+            </View>
 
+            <View style={{ flexDirection: "row", marginTop: 17, justifyContent: "center", width: "100%" }}>
+              <Text style={styles.notamember}>Not a member ?</Text>
+              <TouchableOpacity onPress={navigatesignup}>
+                <Text style={{ color: "#00aaf0", fontSize: 17 }}>  Create an account </Text>
+              </TouchableOpacity>
 
+            </View>
 
-          </View>
-
-
-          <TouchableOpacity
-            onPress={handleLogin}
-            style={styles.loginBtn}>
-            <Text style={styles.loginText}>Login</Text>
-          </TouchableOpacity>
-          <View style={{ alignItems: "center", }}>
-            <Text style={styles.ortext}>------- or -------</Text>
-          </View>
-
-          <View style={{ flexDirection: "row", marginTop: 17, justifyContent: "center", width: "100%" }}>
-            <Text style={styles.notamember}>Not a member ?</Text>
-            <TouchableOpacity onPress={navigatesignup}>
-              <Text style={{ color: "#00aaf0", fontSize: 17 }}>  Create an account </Text>
-            </TouchableOpacity>
-
-          </View>
-
-          <Popup
-            visible={modalVisible}
-            message={modalMessage}
-            closeModal={closeModal}
-          />
-        </ScrollView>
+            <Popup
+              visible={modalVisible}
+              message={modalMessage}
+              closeModal={closeModal}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
       <Loader loading={isLoading} />
 

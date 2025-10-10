@@ -13,8 +13,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    width: responsiveWidth(100),
-    height: responsiveHeight(100)
+    // width: responsiveWidth(100),
+    // height: responsiveHeight(100)
 
 
   },
@@ -94,9 +94,9 @@ const styles = StyleSheet.create({
 
   },
   title2: {
-    fontSize: responsiveFontSize(2.5),
+    fontSize: responsiveFontSize(2),
     color: "#000",
-    fontWeight: "500",
+    fontWeight: "400",
     marginBottom: responsiveHeight(2.2),
     fontFamily: themeFamily.fontFamily
 

@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, Button, TouchableOpacity, StyleSheet, Image ,FlatList, SafeAreaView} from 'react-native';
+import { View, Text, TouchableOpacity, Image ,FlatList} from 'react-native';
 import React, { useEffect } from 'react';
 import Card from '../../components/Card';
-import Header from '../CustomHeader/CustomHeader';
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../api/Api';
@@ -14,7 +14,7 @@ import styles from './styles'
 
 import { Image_Base_Url } from '../../api/Api';
 
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface dashbordprops {
   navigation: any
@@ -122,7 +122,7 @@ const Dashboard: React.FC<dashbordprops> = (props) => {
             />
 
             <View style={{flex:1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-              <Text style={{color:"#000"}}>Version 2.1</Text>
+              <Text style={{color:"#000"}}>Version 2.5</Text>
             </View>
 
       </View>

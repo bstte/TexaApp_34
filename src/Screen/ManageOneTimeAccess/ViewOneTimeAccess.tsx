@@ -1,11 +1,10 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, ActivityIndicator, SafeAreaView } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList } from 'react-native'
 import React, { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../api/Api';
 import styles from './styles'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SubUserCard from '../../components/SubUserCard';
-import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { Image_Base_Url } from '../../api/Api';
 import {
@@ -13,6 +12,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { RefreshControl } from 'react-native';
 import CommonCard from '../../components/Common/CommonCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface subprops {
     navigation: any
 }
@@ -75,7 +75,7 @@ const ViewOneTimeAccess: React.FC<subprops> = (props) => {
         })
     }
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.viewcontainer}>
             <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.drawerButton}

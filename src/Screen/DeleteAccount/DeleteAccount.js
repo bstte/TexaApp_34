@@ -1,10 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Alert, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import CustomHeader from "../CustomHeader/CustomHeader";
 import api from "../../api/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 const DeleteAccountScreen = () => {
 
     const navigation = useNavigation();
@@ -25,9 +25,9 @@ const DeleteAccountScreen = () => {
         try {
             const token = await AsyncStorage.getItem('token');
             if (token) {
-                console.log(token)
+                // console.log(token)
                 const response = await api.deleteaccount(token);
-                console.log(response.data)
+                // console.log(response.data)
                 Alert.alert("Account Deleted", response.data.msg);
                 navigation.reset({
                     index: 0,
@@ -45,7 +45,7 @@ const DeleteAccountScreen = () => {
         <SafeAreaView style={styles.container}>
             <CustomHeader title="Delete Account" imgSource={''} />
 
-            <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+            <View style={{ justifyContent: "center", alignItems: "center", flex: 1 ,       padding: 20,}}>
 
                 <Text style={styles.heading}>Delete Your Account</Text>
                 <Text style={styles.description}>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         // justifyContent: "center",
         // alignItems: "center",
         backgroundColor: "#fff",
-        padding: 20,
+ 
     },
     heading: {
         fontSize: 22,

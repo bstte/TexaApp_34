@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, ActivityIndicator, RefreshControl } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect } from 'react'
 import api from '../../api/Api';
 import styles from './styles';
@@ -13,7 +13,7 @@ import { useRoute } from '@react-navigation/native';
 import { Image_Base_Url } from '../../api/Api';
 import CommonCard from '../../components/Common/CommonCard';
 import { setDosageItems } from '../../Reducer/slices/dosageItemsSlice';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface dosageprops {
     navigation: any
@@ -81,7 +81,6 @@ const ListDosage: React.FC<dosageprops> = (props) => {
         if (userId && token) {
             try {
                 const response = await api.get_dosage(userId, token)
-                console.log("here dosage ", response.data)
                 setDosageData(response.data)
                 setIsLoading(false);
             } catch (error) {

@@ -38,40 +38,7 @@ const CustomDrawNavigator: React.FC<customeprops> = (props) => {
   const profileImage = userData ? userData.profile_photo_path : '';
   const [isLoading, setIsLoading] = React.useState(false);
 
-  // console.log("check login use stats",userData)
 
-  // useEffect(() => {
-  //   get_user();
-  // }, [])
-
-
-
-  // get current user data using token
-  // const get_user = async () => {
-  //   const token = await AsyncStorage.getItem('token');
-  //   if (token) {
-  //     try {
-  //       const response = await api.get_user(token)
-  //       console.log("here drawer respoe",response.data.user.id)
-  //       if (response.data.status === "success") {
-  //         // await AsyncStorage.setItem("userId", `${response.data.user.id}`)
-  //         // setUserData(response.data.user)
-  //         dispatch(setUser(response.data.user))
-
-  //       }
-  //     } catch (error) {
-  //       const axiosError = error as AxiosError;
-  //       if (axiosError.response && axiosError.response.status === 401) {
-  //         if (axiosError.response.data.message === "Unauthenticated.") {
-  //           await AsyncStorage.removeItem('token');
-  //          props.navigation.navigate('Login');
-  //         }
-
-  //       }
-  //     }
-  //   }
-
-  // }
   const logout = async () => {
 
     Alert.alert(

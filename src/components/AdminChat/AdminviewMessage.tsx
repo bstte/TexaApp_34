@@ -26,7 +26,7 @@ const AdminviewMessage: React.FC<Message> = ({ time, message,AdminId }) => {
         try {
             SetIsLoading(true)
             const docUrl = fullImage;
-            console.log("doc url",docUrl)
+            // console.log("doc url",docUrl)
             const { config, fs } = RNFetchBlob;
             const { DocumentDir } = fs.dirs;
     

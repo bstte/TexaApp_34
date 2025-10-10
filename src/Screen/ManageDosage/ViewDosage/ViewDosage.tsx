@@ -1,14 +1,14 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import api, { Image_Base_Url } from '../../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import CustomHeader from '../../CustomHeader/CustomHeader';
 import Textlabel from '../../../components/Textlabel';
-import Icon from 'react-native-vector-icons/AntDesign';
 import CommonCard from '../../../components/Common/CommonCard';
 import { responsiveHeight } from 'react-native-responsive-dimensions';
 import { viewFullImage } from '../../../components/Common/FullImage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface ViewProps {
     route: any;
 }

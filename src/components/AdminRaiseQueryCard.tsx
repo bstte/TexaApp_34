@@ -45,12 +45,10 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
         const token = await AsyncStorage.getItem('token');
        
         const adminId=`admin_${props.admin_id}`
-        console.log("from admin",adminId)
-        console.log("case id",props.case_id)
         if (token) {
             try {
                 const response = await api.getChatCount_admin(props.case_id,adminId, token)
-                console.log("response chat", response.data)
+                // console.log("response chat", response.data)
                 SetChatCounting(response.data)
             } catch (error) {
                 console.log("getchatcount error:", error)
@@ -75,6 +73,8 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
     //         };
     //     }, [])
     // );
+
+    // console.log("orpe",props)
     const deleteraisequery = async (id: number) => {
         console.log(id)
         try {
@@ -125,11 +125,10 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
 
 
 
-    const AdminChat = (user_id: number, case_id: number, shop_id: number, adminId: number, item: any) => {
+    const AdminChat = (user_id: number, case_id: number,adminId: number, item: any) => {
         navigation.navigate('AdminChatPage', {
             user_id: user_id,
             case_id: case_id,
-            shop_id: shop_id,
             adminId: `admin_${adminId}`,
             item: item
         });
@@ -159,13 +158,16 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
             console.log("error:", errer)
         }
     }
-    console.log(props)
     return (
         <>
             <CommonCard>
-                <Textlabel title="Subject:" value={props.query_title} />
-                <Textlabel title="Description:" value={props.description} />
+              
+
+                <Textlabel title="Ticket:" value={props.case_id} />
+                <Textlabel title="Query Title:" value={props.query_title} />
+                {/* <Textlabel title="Description:" value={props.description} /> */}
                 <Textlabel title="Product:" value={props.product_name} />
+              
                 {
                     role === 1 && user_type === 0 ? (
                         <Dropdown
@@ -207,7 +209,7 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
                         <View style={{ flexDirection: "row" }}>
                             <View style={{ position: "relative" }}>
                                 <TouchableOpacity style={{ marginRight: 10, marginTop: 4 }} onPress={() => {
-                                    AdminChat(props.user_id, props.case_id, props.shop_id, userData && userData.id, {
+                                    AdminChat(props.user_id, props.case_id, userData && userData.id, {
                                         profile_photo_path: `${Image_Base_Url}/images/user/${userData && userData.profile_photo_path}`,
                                         name: userData ? userData.name + (userData.lname ? userData.lname : '') : ''
                                     })

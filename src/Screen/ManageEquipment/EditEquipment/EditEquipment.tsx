@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StatusBar, TouchableOpacity, Text, ScrollView, Image, ActivityIndicator, Alert, Modal } from 'react-native';
+import { View, TouchableOpacity, Text, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import CustomHeader from '../../CustomHeader/CustomHeader';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ImagePicker from 'react-native-image-crop-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import api, { Image_Base_Url } from '../../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomEditDropdown from '../../../components/CustomEditDropdown';
 import styles from '../AddEquipment/styles';
 import CustomImageModal from '../../../components/CustomImageModal';
-import {
-    responsiveHeight,
-} from "react-native-responsive-dimensions";
-import { Picker } from '@react-native-picker/picker';
-import ImageResizer from 'react-native-image-resizer';
 import CustomTextInput from '../../../components/CustomTextInput';
 import Loader from '../../../components/Loader';
 import SuccessMessage, { ErrorMessage } from '../../../components/Common/CustomTostMessage';
 import { useSelector } from 'react-redux';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 interface EditEquipment {
     route: any
 }

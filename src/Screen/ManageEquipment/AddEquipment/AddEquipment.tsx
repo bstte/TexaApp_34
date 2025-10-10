@@ -1,29 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StatusBar, TouchableOpacity, Text, ScrollView, Image, ActivityIndicator, Modal, Alert, SafeAreaView } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, ScrollView, Image, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import styles from './styles';
 import CustomHeader from '../../CustomHeader/CustomHeader';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ImagePicker from 'react-native-image-crop-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import axios, { AxiosError } from 'axios';
 import api from '../../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dropdown } from 'react-native-element-dropdown';
-import {
-    responsiveHeight,
-} from "react-native-responsive-dimensions";
 import CustomDropdown from '../../../components/CustomDropdown';
 import Popup from '../../../components/Popup';
-import { Picker } from '@react-native-picker/picker';
-import ImageResizer from 'react-native-image-resizer';
 import CustomImageModal from '../../../components/CustomImageModal';
 import CustomTextInput from '../../../components/CustomTextInput';
 import Loader from '../../../components/Loader';
 import SuccessMessage, { ErrorMessage } from '../../../components/Common/CustomTostMessage';
 import { useSelector } from 'react-redux';
 import CustomDropdownWithAddItem from '../../../components/CustomDropdownWithAddItem';
-
+import { handleApiError } from '../../utils/handleApiError';
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface EquipmentProps {
     route: any,
     navigation: any
@@ -82,14 +73,6 @@ const AddEquipment: React.FC<EquipmentProps> = ({ route, navigation }) => {
 
     const DosageEquipmentList = useSelector((state: any) => state.DosageEquipmentList);
 
-    // console.log("here reducet equipment items", DosageEquipmentList);
-
-    // const machionName = (DosageEquipmentList && DosageEquipmentList.machionName)
-    //     ? DosageEquipmentList.machionName.map((machionName) => ({
-    //         label: machionName.machion_name,
-    //         value: machionName.id
-    //     }))
-    //     : [];
 
     const brand = (BranName && BranName)
         ? BranName.map((brand) => ({
@@ -201,18 +184,18 @@ const AddEquipment: React.FC<EquipmentProps> = ({ route, navigation }) => {
         }
 
         // Validate Installation Year
-const currentYear = new Date().getFullYear();
-const year = parseInt(InstalationYear, 10);
+        const currentYear = new Date().getFullYear();
+        const year = parseInt(InstalationYear, 10);
 
-if (
-  !InstalationYear ||                      // Empty check
-  isNaN(year) ||                           // Not a number
-  InstalationYear.length !== 4 ||          // Not a 4-digit year
-  year < 1900 || year > currentYear        // Invalid year range
-) {
-  ErrorMessage({ message: "Please enter a valid Installation Year" });
-  return false;
-}
+        if (
+            !InstalationYear ||                      // Empty check
+            isNaN(year) ||                           // Not a number
+            InstalationYear.length !== 4 ||          // Not a 4-digit year
+            year < 1900 || year > currentYear        // Invalid year range
+        ) {
+            ErrorMessage({ message: "Please enter a valid Installation Year" });
+            return false;
+        }
 
 
         const equipmentdata = new FormData();
@@ -559,7 +542,8 @@ if (
 
 
         } catch (error) {
-            console.error("addnewItem error:", error)
+            handleApiError(error, "addnewItem error:")
+
         }
 
     }
@@ -570,51 +554,55 @@ if (
             <SafeAreaView style={styles.container}>
 
                 <CustomHeader title="Add New Equipment" imgSource={require('../../../assets/img/profile_img.png')} />
-
+                <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // adjust if header overlaps
+                    >
                 <View style={styles.maincontainer}>
+                 
+                        <ScrollView keyboardShouldPersistTaps="handled">
+                            <View>
 
-                    <ScrollView keyboardShouldPersistTaps="handled">
-                        <View>
+                                <CustomDropdown title='Shop Name' data={shopOption} placeholder='Select Shop Name' onSelect={handleSelectshop} required={true} />
+                                <CustomDropdown title='Machine Type' data={machineOption} placeholder='Select Machine Type' onSelect={handleSelectmachine} required={true} />
+                                <CustomDropdownWithAddItem title='Brand Name' data={brand} placeholder='Select Brand Name' onSelect={(item) => {
 
-                            <CustomDropdown title='Shop Name' data={shopOption} placeholder='Select Shop Name' onSelect={handleSelectshop} required={true} />
-                            <CustomDropdown title='Machine Type' data={machineOption} placeholder='Select Machine Type' onSelect={handleSelectmachine} required={true} />
-                            <CustomDropdownWithAddItem title='Brand Name' data={brand} placeholder='Select Brand Name' onSelect={(item) => {
+                                    setBrandName(item.value)
+                                    SetaddbrandId('')
+                                }} addNewItem={addNewItem} selectedValue={addbrandId} />
 
-                                setBrandName(item.value)
-                                SetaddbrandId('')
-                            }} addNewItem={addNewItem} selectedValue={addbrandId} />
+                                {/* <CustomTextInput title='Brand Name' value={BrandName} placeholder='Brand Name' onChangeText={(brandname) => setBrandName(brandname)} keyboardType='default' /> */}
 
-                            {/* <CustomTextInput title='Brand Name' value={BrandName} placeholder='Brand Name' onChangeText={(brandname) => setBrandName(brandname)} keyboardType='default' /> */}
+                                {/* <CustomTextInput title='Machine Name' value={MachineName} placeholder='Machine Name' onChangeText={(MachineName) => setMachineName(MachineName)} keyboardType='default' /> */}
 
-                            {/* <CustomTextInput title='Machine Name' value={MachineName} placeholder='Machine Name' onChangeText={(MachineName) => setMachineName(MachineName)} keyboardType='default' /> */}
 
-                           
 
-                            <CustomTextInput title='Model Name' value={ModelName} placeholder='Model Name' onChangeText={(ModelName) => setModelName(ModelName)} keyboardType='default' />
-                            <CustomDropdown
-                                title='Capacity'
-                                data={capacity.map((weight) => ({ label: weight, value: weight }))}
-                                placeholder="Select Capacity"
-                                onSelect={handleSelectWeight}
-                            />
-                            <CustomTextInput title='Installation Year' value={InstalationYear} placeholder='Installation Year' onChangeText={(InstalationYear) => setInstalationYear(InstalationYear)} keyboardType="phone-pad" />
-                            {showmachinetype ?
-                                <>
-                                    <CustomDropdown
-                                        title='Machine Type'
-                                        data={vmmachineTypes.map((machineType) => ({ label: machineType, value: machineType }))}
-                                        placeholder="Select Machine Type"
-                                        onSelect={handleSelectvm_machine}
-                                    />
+                                <CustomTextInput title='Model Name' value={ModelName} placeholder='Model Name' onChangeText={(ModelName) => setModelName(ModelName)} keyboardType='default' />
+                                <CustomDropdown
+                                    title='Capacity'
+                                    data={capacity.map((weight) => ({ label: weight, value: weight }))}
+                                    placeholder="Select Capacity"
+                                    onSelect={handleSelectWeight}
+                                />
+                                <CustomTextInput title='Installation Year' value={InstalationYear} placeholder='Installation Year' onChangeText={(InstalationYear) => setInstalationYear(InstalationYear)} keyboardType="phone-pad" />
+                                {showmachinetype ?
+                                    <>
+                                        <CustomDropdown
+                                            title='Machine Type'
+                                            data={vmmachineTypes.map((machineType) => ({ label: machineType, value: machineType }))}
+                                            placeholder="Select Machine Type"
+                                            onSelect={handleSelectvm_machine}
+                                        />
 
-                                    <CustomDropdown
-                                        title='Heat Type'
-                                        data={heatType.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Heat Type"
+                                        <CustomDropdown
+                                            title='Heat Type'
+                                            data={heatType.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Heat Type"
 
-                                        onSelect={handleSelectheattype}
-                                    />
-                                    {/* 
+                                            onSelect={handleSelectheattype}
+                                        />
+                                        {/* 
                                     <CustomDropdown
                                         title='Volume'
                                         data={Volume.map((Volume) => ({ label: Volume, value: Volume }))}
@@ -622,220 +610,222 @@ if (
 
                                         onSelect={handleSelectvalume}
                                     /> */}
-                                    <CustomDropdown
-                                        title='Program Type'
-                                        data={programType.map((programType) => ({ label: programType, value: programType }))}
-                                        placeholder="Select Program Type"
+                                        <CustomDropdown
+                                            title='Program Type'
+                                            data={programType.map((programType) => ({ label: programType, value: programType }))}
+                                            placeholder="Select Program Type"
 
-                                        onSelect={handleSelectprogramtype}
-                                    />
-                                </>
-                                : null}
-
-
-
-                            {showcleaningmachine ? (
-                                <>
-                                    <CustomDropdown
-                                        title='Number of Tank(s)'
-                                        data={Numberoftank.map((tank) => ({ label: tank, value: tank }))}
-                                        placeholder="Select Number of Tank"
-                                        iconName='fountain-pen-tip'
-                                        onSelect={handleSelectNumberoftank}
-                                    />
-                                    <CustomDropdown
-                                        title='Solvent Type'
-                                        data={Solvent.map((Solvent) => ({ label: Solvent, value: Solvent }))}
-                                        placeholder="Select Solvent Type"
-                                        iconName='fountain-pen-tip'
-                                        onSelect={handleSelectSolvent}
-                                    />
-
-                                    <CustomDropdown
-                                        title='Heat Type'
-                                        data={heatType.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Heat Type"
-
-                                        onSelect={handleSelect_dc_heattype}
-                                    />
-
-
-                                    <CustomDropdown
-                                        title='Filter'
-                                        data={Filter.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Filter"
-
-                                        onSelect={handleSelect_dc_Filter}
-                                    />
-                                    <CustomDropdown
-                                        title='Frequency Motor'
-                                        data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Frequency Motor"
-
-                                        onSelect={handleSelect_dc_FrequencyMotor}
-                                    />
-
-                                    <CustomDropdown
-                                        title='Spray Unit'
-                                        data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Spray Unit"
-
-                                        onSelect={handleSelect_dc_SprayUnit}
-                                    />
-                                    <CustomDropdown
-                                        title='Solvent Cooling System'
-                                        data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Solvent Cooling System"
-
-                                        onSelect={handleSelect_dc_SolventCoolingSystem}
-                                    />
-
-                                    <CustomDropdown
-                                        title='Distillation'
-                                        data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Distillation"
-
-                                        onSelect={handleSelect_dc_Distillation}
-                                    />
-
-                                    <CustomDropdown
-                                        title='Distillation Type'
-                                        data={DistillationType.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Distillation Type"
-
-                                        onSelect={handleSelect_dc_DistillationType}
-                                    />
-
-                                    <CustomDropdown
-                                        title='Distillation Method'
-                                        data={DistillationMethod.map((heatType) => ({ label: heatType, value: heatType }))}
-                                        placeholder="Select Distillation Method "
-
-                                        onSelect={handleSelect_dc_DistillationMethod}
-                                    />
+                                            onSelect={handleSelectprogramtype}
+                                        />
+                                    </>
+                                    : null}
 
 
 
-                                </>
-                            ) : null}
-
-
-                            {showfishingequipment ? (
-                                <>
-                                 <CustomDropdownWithAddItem title='Machine Name' data={machionName} placeholder='Select Machine Name' onSelect={(item) => {
-                                setMachineName(item.value)
-                                SetaddmachineId('')
-                            }} addNewItem={addMachineItem} selectedValue={addmachineId} />
-                                    <CustomTextInput title='Finishing Equipment Type' value={fe_finishing_equipment_type} placeholder='Finishing Equipment Type' onChangeText={(finishing_equipment_type) => setfe_finishing_equipment_type(finishing_equipment_type)} keyboardType='default' />
-                                </>
-                            ) : null}
-
-                            {showDryer ? (
-                                <>
-                                    <CustomTextInput title='Dryer Type' value={dryer_type} placeholder='Dryer Type' onChangeText={(ryer_type) => setdryer_type(ryer_type)} keyboardType='default' />
-                                    <CustomDropdown
-                                        title='Volume'
-                                        data={weights.map((Volume) => ({ label: Volume, value: Volume }))}
-                                        placeholder="Select Volume"
-
-                                        onSelect={handleSelectVolume}
-                                    />
-                                    <CustomDropdown
-                                        title='Program Number'
-                                        data={numberOptions.map((number) => ({
-                                            label: number.toString(),
-                                            value: number.toString(),
-                                        }))}
-                                        placeholder="Select Program Number"
-
-                                        onSelect={handleProgramNumber}
-                                    />
-                                    <CustomDropdown
-                                        title='Program Name'
-                                        data={programname.map((number) => ({
-                                            label: number.toString(),
-                                            value: number.toString(),
-                                        }))}
-                                        placeholder="Program Name"
-
-                                        onSelect={handleprogramname}
-                                    />
-
-                                </>
-                            ) : null}
-
-
-
-
-                            {
-                                (showmachinetype || showfishingequipment || showcleaningmachine) ? (
+                                {showcleaningmachine ? (
                                     <>
                                         <CustomDropdown
-                                            title='Dosage Equipments'
-                                            data={dosage}
-                                            placeholder="Select Dosage Equipment"
-
-                                            onSelect={handleSelectdosageequipment}
+                                            title='Number of Tank(s)'
+                                            data={Numberoftank.map((tank) => ({ label: tank, value: tank }))}
+                                            placeholder="Select Number of Tank"
+                                            iconName='fountain-pen-tip'
+                                            onSelect={handleSelectNumberoftank}
+                                        />
+                                        <CustomDropdown
+                                            title='Solvent Type'
+                                            data={Solvent.map((Solvent) => ({ label: Solvent, value: Solvent }))}
+                                            placeholder="Select Solvent Type"
+                                            iconName='fountain-pen-tip'
+                                            onSelect={handleSelectSolvent}
                                         />
 
-                                        {otherdosageequipment ? (
-                                            <>
-                                                <CustomTextInput title='Other Dosage Equipment' value={otherdosageequipment} placeholder='Other Buyer Name' onChangeText={(other_buyer_name) => setotherdosageequipment(other_buyer_name)} keyboardType='default' secureTextEntry={false} />
-                                            </>
+                                        <CustomDropdown
+                                            title='Heat Type'
+                                            data={heatType.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Heat Type"
 
-                                        ) : null}
+                                            onSelect={handleSelect_dc_heattype}
+                                        />
+
+
+                                        <CustomDropdown
+                                            title='Filter'
+                                            data={Filter.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Filter"
+
+                                            onSelect={handleSelect_dc_Filter}
+                                        />
+                                        <CustomDropdown
+                                            title='Frequency Motor'
+                                            data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Frequency Motor"
+
+                                            onSelect={handleSelect_dc_FrequencyMotor}
+                                        />
+
+                                        <CustomDropdown
+                                            title='Spray Unit'
+                                            data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Spray Unit"
+
+                                            onSelect={handleSelect_dc_SprayUnit}
+                                        />
+                                        <CustomDropdown
+                                            title='Solvent Cooling System'
+                                            data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Solvent Cooling System"
+
+                                            onSelect={handleSelect_dc_SolventCoolingSystem}
+                                        />
+
+                                        <CustomDropdown
+                                            title='Distillation'
+                                            data={yes_no.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Distillation"
+
+                                            onSelect={handleSelect_dc_Distillation}
+                                        />
+
+                                        <CustomDropdown
+                                            title='Distillation Type'
+                                            data={DistillationType.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Distillation Type"
+
+                                            onSelect={handleSelect_dc_DistillationType}
+                                        />
+
+                                        <CustomDropdown
+                                            title='Distillation Method'
+                                            data={DistillationMethod.map((heatType) => ({ label: heatType, value: heatType }))}
+                                            placeholder="Select Distillation Method "
+
+                                            onSelect={handleSelect_dc_DistillationMethod}
+                                        />
 
 
 
                                     </>
-                                ) : null
-                            }
-
-                            <TouchableOpacity onPress={handleFrontImageModalVisible} style={styles.ImageContainer}>
-                                <Text style={{ fontSize: 17, color: "#333" }}>Add Front Image</Text>
-                                <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
-                            </TouchableOpacity>
-                            <View style={styles.selectedimgcontainer}>
-                                {frontBase64Image ? (
-                                    <View>
-                                        <Image source={{ uri: frontBase64Image }} style={styles.selectedimg} />
-                                        <TouchableOpacity
-                                            style={styles.deleteButton}
-                                            onPress={() => handleDeletefrontImage()}
-                                        >
-                                            <Text style={styles.deleteButtonText}>X</Text>
-                                        </TouchableOpacity>
-                                    </View>
                                 ) : null}
+
+
+                                {showfishingequipment ? (
+                                    <>
+                                        <CustomDropdownWithAddItem title='Machine Name' data={machionName} placeholder='Select Machine Name' onSelect={(item) => {
+                                            setMachineName(item.value)
+                                            SetaddmachineId('')
+                                        }} addNewItem={addMachineItem} selectedValue={addmachineId} />
+                                        <CustomTextInput title='Finishing Equipment Type' value={fe_finishing_equipment_type} placeholder='Finishing Equipment Type' onChangeText={(finishing_equipment_type) => setfe_finishing_equipment_type(finishing_equipment_type)} keyboardType='default' />
+                                    </>
+                                ) : null}
+
+                                {showDryer ? (
+                                    <>
+                                        <CustomTextInput title='Dryer Type' value={dryer_type} placeholder='Dryer Type' onChangeText={(ryer_type) => setdryer_type(ryer_type)} keyboardType='default' />
+                                        <CustomDropdown
+                                            title='Volume'
+                                            data={weights.map((Volume) => ({ label: Volume, value: Volume }))}
+                                            placeholder="Select Volume"
+
+                                            onSelect={handleSelectVolume}
+                                        />
+                                        <CustomDropdown
+                                            title='Program Number'
+                                            data={numberOptions.map((number) => ({
+                                                label: number.toString(),
+                                                value: number.toString(),
+                                            }))}
+                                            placeholder="Select Program Number"
+
+                                            onSelect={handleProgramNumber}
+                                        />
+                                        <CustomDropdown
+                                            title='Program Name'
+                                            data={programname.map((number) => ({
+                                                label: number.toString(),
+                                                value: number.toString(),
+                                            }))}
+                                            placeholder="Program Name"
+
+                                            onSelect={handleprogramname}
+                                        />
+
+                                    </>
+                                ) : null}
+
+
+
+
+                                {
+                                    (showmachinetype || showfishingequipment || showcleaningmachine) ? (
+                                        <>
+                                            <CustomDropdown
+                                                title='Dosage Equipments'
+                                                data={dosage}
+                                                placeholder="Select Dosage Equipment"
+
+                                                onSelect={handleSelectdosageequipment}
+                                            />
+
+                                            {otherdosageequipment ? (
+                                                <>
+                                                    <CustomTextInput title='Other Dosage Equipment' value={otherdosageequipment} placeholder='Other Buyer Name' onChangeText={(other_buyer_name) => setotherdosageequipment(other_buyer_name)} keyboardType='default' secureTextEntry={false} />
+                                                </>
+
+                                            ) : null}
+
+
+
+                                        </>
+                                    ) : null
+                                }
+
+                                <TouchableOpacity onPress={handleFrontImageModalVisible} style={styles.ImageContainer}>
+                                    <Text style={{ fontSize: 17, color: "#333" }}>Add Front Image</Text>
+                                    <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
+                                </TouchableOpacity>
+                                <View style={styles.selectedimgcontainer}>
+                                    {frontBase64Image ? (
+                                        <View>
+                                            <Image source={{ uri: frontBase64Image }} style={styles.selectedimg} />
+                                            <TouchableOpacity
+                                                style={styles.deleteButton}
+                                                onPress={() => handleDeletefrontImage()}
+                                            >
+                                                <Text style={styles.deleteButtonText}>X</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    ) : null}
+                                </View>
+
+                                <TouchableOpacity onPress={handleBackImageModalVisible} style={styles.ImageContainer}>
+                                    <Text style={{ fontSize: 17, color: "#333" }}>Add Back Image</Text>
+                                    <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
+                                </TouchableOpacity>
+                                <View style={styles.selectedimgcontainer}>
+                                    {backimgBase64 ? (
+                                        <View >
+                                            <Image source={{ uri: backimgBase64 }} style={styles.selectedimg} />
+                                            <TouchableOpacity
+                                                style={styles.deleteButton}
+                                                onPress={() => handleDeletebackImage()}
+                                            >
+                                                <Text style={styles.deleteButtonText}>X</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    ) : null}
+                                </View>
+
+
+
                             </View>
 
-                            <TouchableOpacity onPress={handleBackImageModalVisible} style={styles.ImageContainer}>
-                                <Text style={{ fontSize: 17, color: "#333" }}>Add Back Image</Text>
-                                <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
-                            </TouchableOpacity>
-                            <View style={styles.selectedimgcontainer}>
-                                {backimgBase64 ? (
-                                    <View >
-                                        <Image source={{ uri: backimgBase64 }} style={styles.selectedimg} />
-                                        <TouchableOpacity
-                                            style={styles.deleteButton}
-                                            onPress={() => handleDeletebackImage()}
-                                        >
-                                            <Text style={styles.deleteButtonText}>X</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ) : null}
-                            </View>
-
-
-
-                        </View>
-
-                    </ScrollView>
+                        </ScrollView>
+                 
                     <TouchableOpacity onPress={submit} style={styles.addtext}>
                         <Text style={styles.adddequipmenttext}>Add Equipment</Text>
                     </TouchableOpacity>
                 </View>
+                </KeyboardAvoidingView>
                 <View >
                     <Modal
                         visible={dosagemodalVisible}

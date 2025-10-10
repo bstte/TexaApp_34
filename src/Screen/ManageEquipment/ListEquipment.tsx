@@ -1,11 +1,10 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList } from 'react-native'
 import React, { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../api/Api';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EquipmentCard from '../../components/EquipmentCard';
-import { useFocusEffect } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import {
     responsiveHeight,
@@ -15,7 +14,8 @@ import { Image_Base_Url } from '../../api/Api';
 import { RefreshControl } from 'react-native';
 import CommonCard from '../../components/Common/CommonCard';
 import { setEquipmentItems } from '../../Reducer/slices/EquipmentItemSlice';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { handleApiError } from '../utils/handleApiError';
 
 interface equipmentprops {
     navigation: any
@@ -61,11 +61,11 @@ const ListEquipment: React.FC<equipmentprops> = (props) => {
             try {
               
                 const response = await api.get_equipment(userId, token)
-
                 setEquipment(response.data)
                 setIsLoading(false);
             } catch (error) {
-                console.log("view equipment", error)
+                handleApiError(error,"view equipment:")
+
             }
 
         }

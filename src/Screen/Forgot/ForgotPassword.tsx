@@ -72,7 +72,7 @@ const resetpassword=async()=>{
   
       try{
         setIsLoading(true)
-        console.log(credentials)
+        // console.log(credentials)
         const response =await api.forget_password(credentials);
         if(response.data.success===true){
             setIsLoading(false);

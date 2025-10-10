@@ -16,6 +16,12 @@ const styles=StyleSheet.create({
       width:responsiveWidth(100),
       height:responsiveHeight(100),
     },
+    viewcontainer:{
+      flex:1,
+      // backgroundColor:"#00aaf0",
+      width:responsiveWidth(100),
+      height:responsiveHeight(100),
+    },
     header: {
       flexDirection: "row",
       justifyContent: "space-between",

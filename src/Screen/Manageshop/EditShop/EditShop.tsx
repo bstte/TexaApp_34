@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator, TextInput, TouchableOpacity, StatusBar, Alert, ScrollView, Image, Modal, TouchableWithoutFeedback, SafeAreaView } from 'react-native'
+import { View, Text, ActivityIndicator, TextInput, TouchableOpacity, Alert, ScrollView, Image, Modal, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import api, { Image_Base_Url } from '../../../api/Api'
@@ -12,6 +12,7 @@ import CustomTextInput from '../../../components/CustomTextInput'
 import Loader from '../../../components/Loader'
 import SuccessMessage, { ErrorMessage } from '../../../components/Common/CustomTostMessage'
 import CustomMultipleImagemodal from '../../../components/Common/CustomMultipleImagemodal'
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface editShopprops {
   route: any
 }
@@ -321,6 +322,11 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
 
       <SafeAreaView style={styles.container}>
         <CustomHeader title="Edit Shop" imgSource={require('../../../assets/img/profile_img.png')} />
+        <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
         <View style={styles.maincontainer}>
           {isLoading ? <View style={styles.loader}>
             <ActivityIndicator size="large" color="gray" />
@@ -561,6 +567,7 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
           }
 
         </View>
+        </KeyboardAvoidingView>
         <View >
           <CustomMultipleImagemodal
             togglevisible={isImageModalVisible}

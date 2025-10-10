@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, RefreshControl, SafeAreaView } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native'
 import React, { useEffect } from 'react'
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,8 +10,8 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
 import CommonCard from '../../components/Common/CommonCard';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface shopProps {
   navigation: any

@@ -11,8 +11,8 @@ import { themeFamily } from "../../../theme";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#00aaf0",
-
+        // backgroundColor: "#00aaf0",
+      
 
     },
 
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         shadowRadius: 1.41,
 
         elevation: responsiveHeight(0.4),
-        color:"#000"
+        color: "#000"
     },
     input: {
         height: responsiveHeight(7.5),
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         shadowRadius: 1.41,
 
         elevation: responsiveHeight(0.4),
-        color:"#000"
+        color: "#000"
     },
     country_calling_code: {
         height: responsiveHeight(7.5),
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     textSelectedStyle: {
         marginRight: responsiveHeight(0.5),
         fontSize: responsiveFontSize(1.8),
-        flex: 1, color:"#000",fontFamily:themeFamily.fontFamily
+        flex: 1, color: "#000", fontFamily: themeFamily.fontFamily
     },
     addtext: {
         paddingVertical: responsiveHeight(1.5), marginHorizontal: responsiveWidth(1.5),
@@ -198,17 +198,17 @@ const styles = StyleSheet.create({
         flex: 1, width: "100%", height: "100%", justifyContent: "center", position: "absolute", backgroundColor: "#89898frgba(0, 0, 0, 0.5)", zIndex: 999
     },
     applicationlabel: {
-        fontSize: responsiveFontSize(2), marginTop: responsiveHeight(1), marginLeft: responsiveHeight(2), color:"#000",fontFamily:themeFamily.fontFamily
+        fontSize: responsiveFontSize(2), marginTop: responsiveHeight(1), marginLeft: responsiveHeight(2), color: "#000", fontFamily: themeFamily.fontFamily
     },
-    applicationTypelabel:{
-        fontSize: responsiveFontSize(1.6),fontFamily:themeFamily.fontFamily,
-        color:"#000" 
+    applicationTypelabel: {
+        fontSize: responsiveFontSize(1.6), fontFamily: themeFamily.fontFamily,
+        color: "#000"
     },
     modelapplicationlable: {
-        fontSize: responsiveFontSize(2), marginTop: responsiveHeight(1),color:"#000",fontFamily:themeFamily.fontFamily
+        fontSize: responsiveFontSize(2), marginTop: responsiveHeight(1), color: "#000", fontFamily: themeFamily.fontFamily
     },
-    productlabel:{
-        flex: 1,color:"#000",fontFamily:themeFamily.fontFamily
+    productlabel: {
+        flex: 1, color: "#000", fontFamily: themeFamily.fontFamily
     },
     imgcontainer: {
         flexDirection: "row", flexWrap: "wrap", gap: responsiveHeight(0.5), marginHorizontal: responsiveWidth(4)
@@ -220,12 +220,12 @@ const styles = StyleSheet.create({
         flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: responsiveHeight(2), marginBottom: responsiveHeight(2)
     },
     uploadimgtext: {
-        fontSize: responsiveFontSize(2.4), marginVertical: responsiveHeight(2), color: "#000",fontFamily:themeFamily.fontFamily,
+        fontSize: responsiveFontSize(2.4), marginVertical: responsiveHeight(2), color: "#000", fontFamily: themeFamily.fontFamily,
         marginHorizontal: responsiveHeight(1),
     },
     addshoptext:
     {
-        color: 'white', fontSize: responsiveFontSize(2.5), fontFamily:themeFamily.fontFamily
+        color: 'white', fontSize: responsiveFontSize(2.5), fontFamily: themeFamily.fontFamily
     },
     modelContainer: {
         flex: 1, justifyContent: 'center',
@@ -289,10 +289,10 @@ const styles = StyleSheet.create({
         flexDirection: "row", alignItems: "center"
     },
     text: {
-        fontSize: 18, color: "#000", fontFamily:themeFamily.fontFamily
+        fontSize: 18, color: "#000", fontFamily: themeFamily.fontFamily
     },
-    closebotton:{
-        color: "#00aaf0", fontSize: responsiveFontSize(2),fontFamily:themeFamily.fontFamily 
+    closebotton: {
+        color: "#00aaf0", fontSize: responsiveFontSize(2), fontFamily: themeFamily.fontFamily
     },
     ImageContainer: {
         marginVertical: responsiveHeight(1.5),
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
         marginLeft: responsiveHeight(2.2), fontSize: responsiveFontSize(1.8), color: "#000", fontFamil: themeFamily.fontFamily
     },
     numbercontainer: {
-marginTop:responsiveHeight(1.7)
+        marginTop: responsiveHeight(1.7)
     }
 })
 

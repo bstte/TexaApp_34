@@ -45,7 +45,7 @@ const SubUserCard: React.FC<Equipmetndataprops> = ({ props, index, onDelete, nav
                                         message:response.data.message
                                     })
                                     onDelete(id);
-                                    console.log("delete respone", response.data)
+                                    // console.log("delete respone", response.data)
                                 }
                             }
                         },

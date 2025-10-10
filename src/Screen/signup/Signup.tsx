@@ -1,24 +1,20 @@
-import { View, Text, StyleSheet, TextInput, Alert, Button, TouchableOpacity, ScrollView, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput,TouchableOpacity, ScrollView, ActivityIndicator, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import React, { useEffect } from 'react';
 import AgreeCheckbox from '../../components/AgreeCheckbox';
 import CountryDropdown from '../../components/CountryDropdown';
-import { Dropdown } from 'react-native-element-dropdown';
 import Popup from '../../components/Popup';
 import api, { Image_Base_Url } from '../../api/Api';
 import axios, { AxiosError } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../Reducer/slices/userSlice';
-import CustomDropdown from '../../components/CustomDropdown';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
-  responsiveHeight,
-  responsiveWidth,
   responsiveFontSize
 } from "react-native-responsive-dimensions";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import style from './styles';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import SuccessMessage from '../../components/Common/CustomTostMessage';
 
 
@@ -219,6 +215,13 @@ const Signup: React.FC<signup> = (props) => {
   return (
     <>
       <SafeAreaView style={style.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        
+
         <ScrollView keyboardShouldPersistTaps="handled">
           <View style={{ alignItems: "center" }}>
             <Text style={style.title}>T E X A</Text>
@@ -317,6 +320,7 @@ const Signup: React.FC<signup> = (props) => {
         closeModal={closeModal}
       />
     </ScrollView >
+    </KeyboardAvoidingView>
       </SafeAreaView >
 {
   isLoading?(

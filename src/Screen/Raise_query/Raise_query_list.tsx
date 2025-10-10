@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, ActivityIndicator, RefreshControl } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList,RefreshControl } from 'react-native'
 import React, { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../api/Api';
@@ -8,11 +8,10 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import RaiseQueryCard from '../../components/RaiseQueryCard';
-import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { Image_Base_Url } from '../../api/Api';
 import CommonCard from '../../components/Common/CommonCard';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface props {
   navigation: any
@@ -48,7 +47,7 @@ const Raise_query_list: React.FC<props> = (props) => {
         const response = await api.get_query_list(userId, token)
 
         const dataArray = Object.values(response.data.data);
-        console.log("listing data",dataArray)
+        // console.log("listing data",dataArray)
         if (Array.isArray(dataArray)) {
           setraisequeryData(dataArray);
 

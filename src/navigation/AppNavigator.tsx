@@ -29,6 +29,7 @@ import AdminChat from '../Screen/AdminChat/AdminChat';
 import AdminChatPage from '../components/AdminChat/AdminChatPage';
 import VideoCall from '../Screen/VideoCall/VideoCall';
 import ChatBotScreen from '../Screen/Chatbot/ChatBotScreen';
+import NavigationService from './NavigationService';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,7 +37,7 @@ const AppNavigator = () => {
 
 
     return (
-      <NavigationContainer>
+      <NavigationContainer ref={(ref)=>NavigationService.setTopLevelNavigator(ref)}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Authuser" component={Authuser} />
             <Stack.Screen name="Signup" component={Signup} />

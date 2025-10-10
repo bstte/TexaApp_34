@@ -46,7 +46,7 @@ const EquipmentCard: React.FC<Equipmetndataprops> = ({ props, index, onDelete, n
                                             message:response.data.message
                                         })
                                         onDelete(id);
-                                        console.log("delete respone", response.data)
+                                        // console.log("delete respone", response.data)
                                     }
                                 }catch(error){
                                     console.log('delte equipment error',error)

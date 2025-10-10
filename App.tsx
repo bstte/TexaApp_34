@@ -7,76 +7,14 @@ import Toast from 'react-native-toast-message';
 import store from './src/Reducer/rootReducer';
 import { toastConfig } from './toastConfig';
 import NetInfo from '@react-native-community/netinfo';
-import SuccessMessage from './src/components/Common/CustomTostMessage';
 import firebaseinitialize from './src/components/Common/firebaseinitialize';
 import messaging from '@react-native-firebase/messaging';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
 
-  // Request permission for notifications
-// const requestUserPermission = async () => {
-//   const authStatus = await messaging().requestPermission();
-//   const enabled =
-//     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-//     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-//   if (enabled) {
-//     console.log('Authorization status:', authStatus);
-//   }
-// };
-
-// Request Android specific permission
-// const DefaultRequestPermission = async () => {
-//   if (Platform.OS === 'android' && Platform.Version >= 33) {
-//     try {
-//       const result = await PermissionsAndroid.request(
-//         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-//         {
-//           title: 'Notification Permission',
-//           message: 'This app needs notification permissions to send you updates.',
-//           buttonPositive: 'Allow',
-//           buttonNegative: 'Deny',
-//         }
-//       );
-
-//       if (result === PermissionsAndroid.RESULTS.GRANTED) {
-//         console.log('Notification permission granted');
-//       } else {
-//         console.log('Notification permission denied');
-//       }
-//     } catch (err) {
-//       console.warn('Permission request error:', err);
-//     }
-//   } else {
-//     console.log('Notification permission not required for this Android version');
-//   }
-// };
-
   useEffect(() => {
-    let unsubscribe; // Declare unsubscribe in the outer scope
-
-    const initializeFirebase = async () => {
-      try {
-        const firebaseApp = await firebaseinitialize();
-        // console.log('Firebase initialized successfully:', firebaseApp);
-        // Setup listener for FCM messages in the foreground
-        unsubscribe = messaging().onMessage(async remoteMessage => {
-          // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-          console.log("here leteast data", remoteMessage)
-     
-        });
-        // requestUserPermission()
-        // DefaultRequestPermission()
-
-
-
-      } catch (error) {
-        console.error('Error initializing Firebase:', error);
-      }
-    };
-
-    initializeFirebase();
-
+    let unsubscribe; 
     const timeout = setTimeout(() => {
       SplashScreen.hide();
     }, 1000);
@@ -95,7 +33,46 @@ const App = () => {
     };
   }, []);
 
-  const webViewRef = useRef(null);
+
+  useEffect(() => {
+    const initializeFirebase = async () => {
+      try {
+        await firebaseinitialize();
+  
+        // 📍 Foreground notification (jab app open ho)
+        // const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+        //   console.log("📩 Foreground Notification Received:", remoteMessage);
+        // });
+  
+        // 📍 Background se notification click par
+        // const unsubscribeOnNotificationOpenedApp = messaging().onNotificationOpenedApp(remoteMessage => {
+        //   console.log('📲 App opened from background by notification:', remoteMessage);
+        // });
+  
+        // 📍 App quit state me notification click par
+        // messaging()
+        //   .getInitialNotification()
+        //   .then(remoteMessage => {
+        //     if (remoteMessage) {
+        //       console.log('🚀 App opened from quit state by notification:', remoteMessage);
+        //     }
+        //   });
+  
+        // return () => {
+        //   unsubscribeOnMessage();
+        //   unsubscribeOnNotificationOpenedApp();
+        // };
+  
+      } catch (error) {
+        console.error('❌ Error initializing Firebase:', error);
+      }
+    };
+  
+    initializeFirebase();
+  }, []);
+
+  
+  
 
   return (
     <Provider store={store}>

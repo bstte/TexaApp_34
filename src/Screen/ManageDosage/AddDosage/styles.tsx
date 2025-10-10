@@ -11,7 +11,7 @@ import { themeFamily } from "../../../theme";
  const styles=StyleSheet.create({
 container:{
     flex:1,
-    backgroundColor:"#00aaf0",
+    // backgroundColor:"#00aaf0",
   
     
 },

@@ -1,27 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StatusBar, TouchableOpacity, Text, ScrollView, Image, PermissionsAndroid, ActivityIndicator, Modal, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, SafeAreaView } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, ScrollView, Image, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import styles from './styles';
 import CustomHeader from '../../CustomHeader/CustomHeader';
-import { MultiSelect } from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import ImagePicker from 'react-native-image-crop-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import api from '../../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Popup from '../../../components/Popup';
 import { AxiosError } from 'axios';
-import AgreeCheckbox from '../../../components/AgreeCheckbox';
-import ImageResizer from 'react-native-image-resizer';
 import { useSelector } from 'react-redux';
 import CountryDropdown from '../../../components/CountryDropdown';
-import { responsiveHeight, responsiveWidth, responsiveFontSize } from "react-native-responsive-dimensions";
 import CustomTextInput from '../../../components/CustomTextInput';
 import Loader from '../../../components/Loader';
 import SuccessMessage, { ErrorMessage } from '../../../components/Common/CustomTostMessage';
 import CustomMultipleImagemodal from '../../../components/Common/CustomMultipleImagemodal';
 
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -293,9 +286,14 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
       <SafeAreaView style={styles.container}>
 
         <CustomHeader title="Add New Shop" imgSource={require('../../../assets/img/profile_img.png')} />
+        <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
 
         <View style={styles.maincontainer}>
-          <ScrollView keyboardShouldPersistTaps="handled">
+          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, paddingBottom: 0 }}>
             <View >
               <CustomTextInput title='Shop Name' value={Shopname} placeholder='Shop Name' onChangeText={(Shopname) => setShopname(Shopname)} required={true}/>
 
@@ -437,13 +435,6 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
               </View>
 
 
-              {/* <View style={styles.uploadimgcontainer}>
-                <TouchableOpacity onPress={handleshopimages}>
-                  <Text style={styles.uploadimgtext}>Add Shop Images</Text>
-                </TouchableOpacity>
-
-
-              </View> */}
 
               <TouchableOpacity onPress={handleshopimages} style={styles.ImageContainer}>
                 <Text style={{ fontSize: 17, color: "#333" }}>Add Shop Images</Text>
@@ -453,11 +444,12 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
 
             </View>
           </ScrollView>
+      
           <TouchableOpacity onPress={submit} style={styles.addtext}>
             <Text style={styles.addshoptext}>Add Shop</Text>
           </TouchableOpacity>
         </View>
-
+        </KeyboardAvoidingView>
 
         {/* here modal  */}
 

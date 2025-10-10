@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api, { Image_Base_Url } from '../../api/Api';
@@ -7,6 +7,7 @@ import { RefreshControl } from 'react-native';
 import { Image } from 'react-native';
 import { responsiveHeight } from 'react-native-responsive-dimensions';
 import { useNavigation } from '@react-navigation/native'; // Import navigation hooks
+import { SafeAreaView } from 'react-native-safe-area-context';
 const AdminChatList = ({ route }) => {
 
     const { user_id, case_id, shop_id } = route.params;
@@ -28,12 +29,11 @@ const AdminChatList = ({ route }) => {
             if (token) {
                 const response = await api.Getadminlist(case_id, token);
                 if (response.data.success === true) {
-
+// console.log("response",response.data)
                     SetadminList(response.data.data)
                     SetIsLoading(false)
-                    console.log("total respnse",response)
                     if(response.data.data.length<2){
-                        console.log("only admin",response.data.data[0])
+                        // console.log("only admin",response.data.data[0])
                         navigation.replace("AdminChat", { 
                             user_id: user_id, 
                             case_id: case_id, 
@@ -43,10 +43,10 @@ const AdminChatList = ({ route }) => {
                         })
 
                     }else{
-                        console.log("with rep",response.data.data)
+                        // console.log("with rep",response.data.data)
                     }
                 }
-                console.log("response", response.data)
+                // console.log("response", response.data)
             }
 
         } catch (error) {

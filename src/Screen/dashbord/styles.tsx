@@ -17,13 +17,7 @@ const styles = StyleSheet.create({
         padding: 0,
         marginTop:responsiveHeight(1)
     },
-    // profileImage: {
-    //     width: responsiveWidth(4),
-    //     height: 40,
-    //     borderRadius: 20,
-    //     alignItems: "center", justifyContent: "center"
-
-    // },
+ 
     DrawerIcon: {
         flexDirection: "row", justifyContent: "space-between", marginLeft: responsiveHeight(1), marginRight: responsiveHeight(2)
     },

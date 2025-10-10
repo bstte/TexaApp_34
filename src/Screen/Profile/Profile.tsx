@@ -1,31 +1,24 @@
-import React, { useEffect, useId, useState } from 'react';
-import { View, TextInput, StatusBar, TouchableOpacity, Text, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, TouchableOpacity, Text, ScrollView, Image, ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import CustomHeader from '../CustomHeader/CustomHeader';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import axios, { AxiosError } from 'axios';
 import api, { Image_Base_Url } from '../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './styles';
 import { useSelector } from 'react-redux';
-import ImagePicker from 'react-native-image-crop-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import Popup from '../../components/Popup';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../Reducer/slices/userSlice';
-import ImageResizer from 'react-native-image-resizer';
 import CountryDropdown from '../../components/CountryDropdown';
 import CustomImageModal from '../../components/CustomImageModal';
 import {
-    responsiveHeight,
-    responsiveWidth,
-    responsiveFontSize
+    responsiveFontSize, responsiveHeight
 } from "react-native-responsive-dimensions";
 import SuccessMessage from '../../components/Common/CustomTostMessage';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { handleApiError } from '../utils/handleApiError';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const Profile = () => {
+const Profile = (props) => {
     const userData = useSelector((state: any) => state.user.userData)
     const country_calling_code = userData && userData.country && userData.country.calling_code ? userData.country.calling_code : '';
     const calling_code = userData && userData.calling_code ? userData.calling_code : '';
@@ -39,7 +32,7 @@ const Profile = () => {
     const profileImage = userData ? userData.profile_photo_path : '';
     const [editprofileimg, seteditprofileimg] = React.useState('');
     const [phone, setphone] = useState(userData ? (userData.phone ? userData.phone.toString() : '') : '');
-
+    const role = userData && userData.role;
 
     const [successmsg, setsuccessmsg] = React.useState<string>('');
     const [selectedItem, setSelectedItem] = React.useState(null);
@@ -66,6 +59,7 @@ const Profile = () => {
         const updateprofile = new FormData;
         updateprofile.append('name', editedName)
         updateprofile.append('phone', phone)
+        updateprofile.append('role', role)
 
         updateprofile.append('country_id', selectedItem ? selectedItem.value : '')
         if (selectedCallingCode) {
@@ -83,21 +77,19 @@ const Profile = () => {
         const userId = userData ? userData.id : 0;
 
 
-        console.log(updateprofile)
+       
         const token = await AsyncStorage.getItem('token');
         if (userId && token) {
 
             try {
                 setIsLoading(true)
                 const response = await api.user_update(userId, token, updateprofile);
-                // console.log("here update profile", response.data);
+                setIsLoading(false);
                 if (response.data.success === true) {
-                    setIsLoading(false);
+                    
                     SuccessMessage({
                         message: response.data.message
                     })
-
-                    // Retain the existing country data
                     const updatedUserData = {
                         ...userData,
                         ...response.data.data,
@@ -105,15 +97,18 @@ const Profile = () => {
                     };
 
                     dispatch(setUser(updatedUserData));
+                    props.navigation.navigate('Home', { screen: 'Dashboard' });
 
                     return;
                 }
             } catch (error) {
+                setIsLoading(false);
+                handleApiError(error, "porifle udpate error :")
                 console.log("update profile error:", error);
             }
         }
     };
-
+   
 
     const handleCountrySelect = (item: any) => {
         setSelectedItem(item)
@@ -133,81 +128,90 @@ const Profile = () => {
             <SafeAreaView style={styles.container}>
 
                 <CustomHeader title="Complete Your Profile" imgSource={require('../../assets/img/default_profile.jpg')} />
+               
+                <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 
-                <View style={styles.maincontainer}>
+                    <View style={styles.maincontainer}>
 
-                    <ScrollView keyboardShouldPersistTaps="handled">
-                        <View style={{ alignItems: "center" }}>
-                            {successmsg ? <Text style={styles.successmsg}>{successmsg}</Text> : ''}
-                        </View>
-                        <View>
+                        <KeyboardAwareScrollView
+                            keyboardShouldPersistTaps="handled"
+                            enableOnAndroid={true}
+                            extraScrollHeight={20}
+                            contentContainerStyle={{ flexGrow: 1, paddingBottom: responsiveHeight(2) }}
+                            showsVerticalScrollIndicator={false}
+                        >
+
+                            <View style={{ alignItems: "center" }}>
+                                {successmsg ? <Text style={styles.successmsg}>{successmsg}</Text> : ''}
+                            </View>
                             <View>
-                                <TouchableOpacity onPress={handleImageModalVisible} style={styles.updateprofileimg}>
-                                    {editprofileimg || profileImage ? (
-                                        <Image
-                                            source={editprofileimg ? { uri: editprofileimg } : { uri: `${Image_Base_Url}/${profileImage}` }}
-                                            style={styles.profileimg}
-                                        />
-                                    ) : (
-                                        <Image source={require('../../assets/img/default_profile.jpg')} style={styles.profileimg} />)}
+                                <View>
+                                    <TouchableOpacity onPress={handleImageModalVisible} style={styles.updateprofileimg}>
+                                        {editprofileimg || profileImage ? (
+                                            <Image
+                                                source={editprofileimg ? { uri: editprofileimg } : { uri: `${Image_Base_Url}/${profileImage}` }}
+                                                style={styles.profileimg}
+                                            />
+                                        ) : (
+                                            <Image source={require('../../assets/img/default_profile.jpg')} style={styles.profileimg} />)}
 
+                                    </TouchableOpacity>
+
+                                </View>
+                                <TouchableOpacity onPress={handleImageModalVisible} style={{ justifyContent: "center", alignItems: "center" }}>
+                                    <Text style={{ fontSize: 17, color: "#333" }}>Edit Profile</Text>
                                 </TouchableOpacity>
 
-                            </View>
-                            <TouchableOpacity onPress={handleImageModalVisible} style={{ justifyContent: "center", alignItems: "center" }}>
-                                <Text style={{ fontSize: 17, color: "#333" }}>Edit Profile</Text>
-                            </TouchableOpacity>
-
-                            <TextInput
-                                style={styles.Textinput}
-                                placeholderTextColor={"#787a7c"}
-                                placeholder="Enter Your Name"
-                                autoCapitalize='none'
-                                value={editedName}
-                                autoCorrect={false}
-                                onChangeText={(text) => setEditedName(text)} // Update editedName as the user types
-                            />
-                            {/* <TextInput style={styles.Textinput} placeholder="Enter Your Name" autoCapitalize='none' value={userData ? userData.name : ""} autoCorrect={false} /> */}
-                            <TextInput style={styles.Textinput} placeholder="Enter Your email" autoCapitalize='none' value={userData ? userData.email : ""} autoCorrect={false} editable={false} placeholderTextColor={"#787a7c"} />
+                                <TextInput
+                                    style={styles.Textinput}
+                                    placeholderTextColor={"#787a7c"}
+                                    placeholder="Enter Your Name"
+                                    autoCapitalize='none'
+                                    value={editedName}
+                                    autoCorrect={false}
+                                    onChangeText={(text) => setEditedName(text)} // Update editedName as the user types
+                                />
+                                {/* <TextInput style={styles.Textinput} placeholder="Enter Your Name" autoCapitalize='none' value={userData ? userData.name : ""} autoCorrect={false} /> */}
+                                <TextInput style={styles.Textinput} placeholder="Enter Your email" autoCapitalize='none' value={userData ? userData.email : ""} autoCorrect={false} editable={false} placeholderTextColor={"#787a7c"} />
 
 
-                            <View style={{ flex: 1 }}>
+                                <View style={{ flex: 1 }}>
 
-                                <TouchableOpacity style={styles.countryDropdownContainer} onPress={handlecountry_code} >
-                                    <View style={{ flexDirection: "row", flex: 1 }}>
-                                        <Image
-                                            source={{ uri: `${Image_Base_Url}/flags/${selectedItem ? selectedItem.flag : country_flag}` }}
-                                            style={styles.flagimg}
-                                        />
-                                        <Text style={styles.dropdownText}>{selectedItem ? selectedItem.label : country_label}</Text>
-                                    </View>
+                                    <TouchableOpacity style={styles.countryDropdownContainer} onPress={handlecountry_code} >
+                                        <View style={{ flexDirection: "row", flex: 1 }}>
+                                            <Image
+                                                source={{ uri: `${Image_Base_Url}/flags/${selectedItem ? selectedItem.flag : country_flag}` }}
+                                                style={styles.flagimg}
+                                            />
+                                            <Text style={styles.dropdownText}>{selectedItem ? selectedItem.label : country_label}</Text>
+                                        </View>
 
-                                    <FontAwesome5 name="caret-down" size={responsiveFontSize(2)} color="black" style={styles.dropdownIcon} />
+                                        <FontAwesome5 name="caret-down" size={responsiveFontSize(2)} color="black" style={styles.dropdownIcon} />
 
+                                    </TouchableOpacity>
+                                    {/* Render the country dropdown */}
+
+                                </View>
+                                <View style={{ width: "100%", marginBottom: 10 }}>
+
+                                    <TouchableOpacity style={styles.country_calling_code} onPress={handlecalling_code}>
+                                        <Text style={styles.country_calling_code_text}>
+                                            +{selectedCallingCode ? selectedCallingCode : calling_code ? calling_code : country_calling_code}
+                                        </Text>
+
+                                    </TouchableOpacity>
+
+
+
+
+                                    <TextInput style={styles.country_calling_code_textinput} placeholder="Enter Phone Number" value={phone?.toString()} maxLength={10} keyboardType="phone-pad" onChangeText={(phonenumber) => setphone(phonenumber)} placeholderTextColor={"#787a7c"} />
+                                </View>
+
+                                <TouchableOpacity onPress={submit} style={styles.updatebutton} >
+                                    <Text style={styles.addtext}>Update Profile</Text>
                                 </TouchableOpacity>
-                                {/* Render the country dropdown */}
 
-                            </View>
-                            <View style={{ width: "100%", marginBottom: 10 }}>
-
-                                <TouchableOpacity style={styles.country_calling_code} onPress={handlecalling_code}>
-                                    <Text style={styles.country_calling_code_text}>
-                                        +{selectedCallingCode ? selectedCallingCode : calling_code ? calling_code : country_calling_code}
-                                    </Text>
-
-                                </TouchableOpacity>
-
-
-                            
-
-                                <TextInput style={styles.country_calling_code_textinput} placeholder="Enter Phone Number" value={phone?.toString()} maxLength={15} keyboardType="phone-pad" onChangeText={(phonenumber) => setphone(phonenumber)} placeholderTextColor={"#787a7c"} />
-                            </View>
-
-                            <TouchableOpacity onPress={submit} style={styles.updatebutton} >
-                                <Text style={styles.addtext}>Update Profile</Text>
-                            </TouchableOpacity>
-
-                            <View style={{ flex: 1 }}>
+                                <View style={{ flex: 1 }}>
                                     <CountryDropdown
                                         togglevisible={isCountryDropdownVisible}
                                         onclose={handlecountry_code}
@@ -237,13 +241,13 @@ const Profile = () => {
                                     />
 
                                 </View>
-                        </View>
+                            </View>
 
+                        </KeyboardAwareScrollView>
 
-                    </ScrollView>
-
-                </View>
-
+                    </View>
+                </TouchableWithoutFeedback>
+                {/* </KeyboardAvoidingView> */}
             </SafeAreaView>
 
             {

@@ -13,7 +13,7 @@ const DocView = ({ docPath, name ,bottomtitle}) => {
         try {
             SetIsLoading(true)
             const docUrl = `https://texa.teamwebdevelopers.com/public/chatImage/${docPthaUrl}`;
-            console.log("doc url",docUrl)
+            // console.log("doc url",docUrl)
             const { config, fs } = RNFetchBlob;
             const { DocumentDir } = fs.dirs;
     

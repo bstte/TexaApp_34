@@ -1,7 +1,6 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {
     responsiveHeight,
 
@@ -12,7 +11,7 @@ import CustomHeader from '../../CustomHeader/CustomHeader';
 import Textlabel from '../../../components/Textlabel';
 import CommonCard from '../../../components/Common/CommonCard';
 import { viewFullImage } from '../../../components/Common/FullImage';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface ViewProps {
     route: any;
 }

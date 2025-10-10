@@ -47,7 +47,6 @@ const RaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelete, on
         }, [])
     );
     const deleteraisequery = async (id: number) => {
-        console.log(id)
         try {
             Alert.alert(
                 'Confirm Deletion',
@@ -95,13 +94,12 @@ const RaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelete, on
     }
 
    
-    // console.log(props)
     return (
         <>
             <CommonCard>
             <Textlabel title="Ticket:" value={props.case_id} />
-                <Textlabel title="Subject:" value={props.query_title} />
-                <Textlabel title="Description:" value={props.description} />
+                <Textlabel title="Query Title:" value={props.query_title} />
+                {/* <Textlabel title="Description:" value={props.description} /> */}
                 <Textlabel title="Product:" value={props.product_name} />
                 <Textlabel title="Submited At:" value={props.created_at} />
                 <View style={styles.maincontainer} />

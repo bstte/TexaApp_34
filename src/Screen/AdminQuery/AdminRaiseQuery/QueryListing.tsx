@@ -1,6 +1,6 @@
 
 
-import { View, Text, TouchableOpacity, Image, ScrollView, TextInput, FlatList, Alert, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList, RefreshControl, StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -9,16 +9,15 @@ import {
     responsiveFontSize,
   responsiveHeight, responsiveWidth,
 } from "react-native-responsive-dimensions";
-
-import { useFocusEffect } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
-import { SafeAreaView } from 'react-native';
 import api, { Image_Base_Url } from '../../../api/Api';
 
 import CommonCard from '../../../components/Common/CommonCard';
 import { themeFamily } from '../../../theme';
 import AdminRaiseQueryCard from '../../../components/AdminRaiseQueryCard';
+import { handleApiError } from '../../utils/handleApiError';
 
 interface props {
   navigation: any
@@ -49,13 +48,11 @@ const QueryListing: React.FC<props> = (props) => {
   const get_raise_query = async () => {
     const userId = await AsyncStorage.getItem('userId')
     const token = await AsyncStorage.getItem('token');
-console.log(token)
     if (userId && token) {
       try {
         const response = await api.admin_query(userId, token)
-        console.log("lis quer",response.data)
         setrepresantative(response.data.reprsentetive)
-
+// console.log("user",response.data)
         const dataArray = Object.values(response.data.data);
         if (Array.isArray(dataArray)) {
           setraisequeryData(dataArray);
@@ -65,7 +62,8 @@ console.log(token)
         }
         setIsLoading(false);
       } catch (error) {
-        console.log("view raise query error:", error)
+        handleApiError(error,"view raise query error")
+        // console.log("view raise query error:", error)
       }
 
     }

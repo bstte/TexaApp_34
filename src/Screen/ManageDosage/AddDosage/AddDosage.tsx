@@ -1,27 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, TextInput, StatusBar, TouchableOpacity, Text, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text, ScrollView, Image} from 'react-native';
 import styles from './styles';
 import CustomHeader from '../../CustomHeader/CustomHeader';
 import { MultiSelect } from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import ImagePicker from 'react-native-image-crop-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import {
-    responsiveHeight,
-} from "react-native-responsive-dimensions";
 import api from '../../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Popup from '../../../components/Popup';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AxiosError } from 'axios';
-import ImageResizer from 'react-native-image-resizer';
-import CustomImageModal from '../../../components/CustomImageModal';
-import CustomTextInput from '../../../components/CustomTextInput';
 import Loader from '../../../components/Loader';
 import SuccessMessage, { ErrorMessage } from '../../../components/Common/CustomTostMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomDropdown from '../../../components/CustomDropdown';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomMultipleImagemodal from '../../../components/Common/CustomMultipleImagemodal';
 import CustomDropdownWithAddItem from '../../../components/CustomDropdownWithAddItem';
 import { setDosageItems } from '../../../Reducer/slices/dosageItemsSlice';
@@ -39,27 +30,16 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
     const [ModelNo, setModelNo] = useState('');
     const [addmanufacturerId, SetaddmanufacturerId] = useState('')
     const [addmodelnameId, SetaddmodelnameId] = useState('')
-    // const [ProductNo, setProductNo] = useState('');
     const [selectmultipleProductNo, setselectmultipleProductNo] = useState<string[]>([]);
     const [PumpsnNo, setPumpsnNo] = useState('');
     const [WashersNo, setWashersNo] = useState('');
-    // const [frontBase64Image, setFrontBase64Image] = useState('');
-    // const [backimgBase64, setBackimgBase64] = useState<string | null>(null);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isImageModalVisible, setImageModalVisible] = React.useState(false)
     const [selectedImages, setSelectedImages] = useState<string[]>([]);
-    // const [isFrontImageModalVisible, setFrontImageModalVisible] = React.useState(false)
-    // const [isBackImageModalVisible, setBackImageModalVisible] = React.useState(false)
 
     const dosageItemList = useSelector((state: any) => state.DosageItemList); // Use 'dosageItems' instead of 'DosageItemList'
     const dispatch = useDispatch()
-    // console.log("here reducet dosage items", dosageItemList);
-
-    // const dosageNameIdToFilter = 3;
-
-    // console.log("here selected dosage item", ModelName)
-
-    // Ensure DosageItemList and dosageNumber are not null or undefined before filtering
+ 
     const filteredDosageNumbers = (dosageItemList && dosageItemList.dosageNumber)
         ? dosageItemList.dosageNumber.filter(item => item.dosageName_id === ModelName)
         : [];
@@ -201,38 +181,6 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
         }
     };
 
-
-
-    // const handlefrontImage = (img) => {
-    //     setFrontBase64Image(img)
-    // }
-
-
-    // const handleBackImage = (img) => {
-    //     setBackimgBase64(img)
-    // }
-
-
-    // const handleDeletefrontImage = () => {
-    //     setFrontBase64Image('')
-    // }
-
-    // const handleDeletebackImage = () => {
-    //     setBackimgBase64('')
-    // }
-
-    // const handleFrontImageModalVisible = () => {
-    //     setFrontImageModalVisible(!isFrontImageModalVisible);
-    // };
-
-    // const handleBackImageModalVisible = () => {
-    //     setBackImageModalVisible(!isBackImageModalVisible);
-    // };
-
-    // const handleDosageItem = (item) => {
-
-    //     setModelName(item.value)
-    // }
 
     const handleDeleteImage = (indexToRemove) => {
         setSelectedImages((prevImages) =>

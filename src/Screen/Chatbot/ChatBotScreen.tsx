@@ -6,17 +6,20 @@ import {
   TextInput,
   ScrollView,
   StyleSheet,
-  KeyboardAvoidingView,
   Image,
-  SafeAreaView,
-  Platform
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import CustomHeader from '../CustomHeader/CustomHeader';
 import { launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../api/Api';
 import Loader from '../../components/Loader';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import SuccessMessage from '../../components/Common/CustomTostMessage';
+import { handleApiError } from '../utils/handleApiError';
 type ChatMessage = {
   from: 'bot' | 'user';
   text: string;
@@ -67,7 +70,7 @@ export default function ChatBotScreen({ route }) {
     if (token && userId) {
       // console.log("get query data id token",token,userId)
       const response = await api.get_query_shop(userId, token);
-      console.log("here get_query_shop", response.data.data)
+      // console.log("here get_query_shop", response.data.data)
 
       if (response.data.success === true) {
         setUserShop(response.data.data)
@@ -238,28 +241,27 @@ export default function ChatBotScreen({ route }) {
     });
 
     const token = await AsyncStorage.getItem('token');
-
+// console.log("formData",formData)
     if (token) {
       try {
         setIsLoading(true);
         const response = await api.chat_query_create(formData, token)
-        // console.log('response', response.data)
-        onFinish()
         setIsLoading(false);
+        SuccessMessage({
+          message: `Your Query has been submitted successfully`
+        });
+        
+        // ⏳ Wait for 2 seconds before calling onFinish
+        setTimeout(() => {
+          onFinish();
+         
+        }, 2000);
       } catch (error: any) {
         setIsLoading(false);
-        if (error.response) {
-          console.error("🔴 Backend Response chat Error:", error.response.data);
-          console.error("🔴 Status Code:", error.response.status);
-          console.error("🔴 Headers:", error.response.headers);
-        } else if (error.request) {
-          console.error("🟠 No Response Received:", error.request);
-        } else {
-          console.error("⚠️ Error Setting up Request:", error.message);
-        }
+       handleApiError(error,"query time error")
       }
 
-      console.log(formData)
+      // console.log(formData)
     }
 
   };
@@ -268,66 +270,77 @@ export default function ChatBotScreen({ route }) {
   return (
     <SafeAreaView style={{ flex: 1 }} >
       <CustomHeader title="Texa Chatbot" imgSource={require('../../assets/img/profile_img.png')} />
-      <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 20 }} ref={scrollRef}>
-        {chatHistory.map((msg, index) => (
-          <View
-            key={index}
-            style={[
-              styles.messageBubble,
-              msg.from === 'bot' ? styles.botBubble : styles.userBubble
-            ]}
-          >
-            <Text style={{ color: msg.from === 'bot' ? '#000' : '#fff' }}>{msg.text}</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0} 
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
+            <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 20 }} ref={scrollRef}>
+              {chatHistory.map((msg, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.messageBubble,
+                    msg.from === 'bot' ? styles.botBubble : styles.userBubble
+                  ]}
+                >
+                  <Text style={{ color: msg.from === 'bot' ? '#000' : '#fff' }}>{msg.text}</Text>
 
-            {msg.type === 'options' && msg.from === 'bot' && (
-              <View style={{ marginTop: 5 }}>
-                {msg.options?.map((opt, i) => {
-                  const isCurrent =
-                    currentStep === -1 || questions[currentStep]?.text === msg.text;
-                  return (
-                    <TouchableOpacity
-                      key={i}
-                      style={styles.optionBtn}
-                      onPress={isCurrent ? () => handleAnswer(opt) : undefined}
-                      disabled={!isCurrent}
-                    >
-                      <Text style={styles.optionText}>{opt}</Text>
+                  {msg.type === 'options' && msg.from === 'bot' && (
+                    <View style={{ marginTop: 5 }}>
+                      {msg.options?.map((opt, i) => {
+                        const isCurrent =
+                          currentStep === -1 || questions[currentStep]?.text === msg.text;
+                        return (
+                          <TouchableOpacity
+                            key={i}
+                            style={styles.optionBtn}
+                            onPress={isCurrent ? () => handleAnswer(opt) : undefined}
+                            disabled={!isCurrent}
+                          >
+                            <Text style={styles.optionText}>{opt}</Text>
 
+                          </TouchableOpacity>
+                        );
+                      })}
+
+                    </View>
+                  )}
+
+                  {msg.type === 'file' && msg.from === 'bot' && (
+                    <TouchableOpacity style={styles.optionBtn} onPress={pickMedia}>
+                      <Text>📎 Attach picture or video</Text>
                     </TouchableOpacity>
-                  );
-                })}
+                  )}
 
+                  {msg.mediaUri && (
+                    <Image source={{ uri: msg.mediaUri }} style={{ width: 200, height: 200, marginTop: 5 }} resizeMode="contain" />
+                  )}
+                </View>
+              ))}
+            </ScrollView>
+
+            {((currentStep < questions.length && questions[currentStep]?.type === 'text') || isOther) && (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder={isOther ? 'Type your other answer...' : questions[currentStep]?.placeholder || 'Type your answer...'}
+                  value={inputValue}
+                  placeholderTextColor={"#787a7c"}
+                  onChangeText={setInputValue}
+                />
+                <TouchableOpacity style={styles.sendBtn} onPress={() => handleAnswer(inputValue)}>
+                  <Text style={{ color: '#fff' }}>Send</Text>
+                </TouchableOpacity>
               </View>
             )}
 
-            {msg.type === 'file' && msg.from === 'bot' && (
-              <TouchableOpacity style={styles.optionBtn} onPress={pickMedia}>
-                <Text>📎 Attach picture or video</Text>
-              </TouchableOpacity>
-            )}
-
-            {msg.mediaUri && (
-              <Image source={{ uri: msg.mediaUri }} style={{ width: 200, height: 200, marginTop: 5 }} resizeMode="contain" />
-            )}
           </View>
-        ))}
-      </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
 
-      {((currentStep < questions.length && questions[currentStep]?.type === 'text') || isOther) && (
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder={isOther ? 'Type your other answer...' : questions[currentStep]?.placeholder || 'Type your answer...'}
-            value={inputValue}
-            placeholderTextColor={"#787a7c"}
-            onChangeText={setInputValue}
-          />
-          <TouchableOpacity style={styles.sendBtn} onPress={() => handleAnswer(inputValue)}>
-            <Text style={{ color: '#fff' }}>Send</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-     
       <Loader loading={isLoading} />
     </SafeAreaView>
   );
@@ -355,6 +368,6 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 12 : 8, // iOS ke liye thoda zyada
     fontSize: 16,
   },
-  
+
   sendBtn: { backgroundColor: '#4CAF50', paddingHorizontal: 15, justifyContent: 'center', marginLeft: 5, borderRadius: 20 }
 });

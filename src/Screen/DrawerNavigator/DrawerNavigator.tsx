@@ -92,7 +92,7 @@ const DrawerNavigator = () => {
           <Drawer.Screen name="Raise A Query" component={Raise_query_list}
             options={{
               drawerIcon: ({ focused, color, size }) => (
-                <Icon name="progress-question" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
+                <Icon name="message-question-outline" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
               )
             }}
           />
@@ -100,7 +100,7 @@ const DrawerNavigator = () => {
           <Drawer.Screen name="Create One Time Access" component={ViewOneTimeAccess}
             options={{
               drawerIcon: ({ focused, color, size }) => (
-                <Icon name="progress-question" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
+                <Icon name="key-outline" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
               )
             }}
           />
@@ -114,37 +114,35 @@ const DrawerNavigator = () => {
 
       {(user_type === 1 && role === 2) && (
         <React.Fragment>
-          <Drawer.Screen name="Raise A Query" component={Raise_query_list}
+          <Drawer.Screen name="Manage Query" component={Raise_query_list}
             options={{
               drawerIcon: ({ focused, color, size }) => (
-                <FontAwesome5 name="question" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : '#202020'} />
-              ),
+                <Icon name="message-question-outline" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />),
 
             }}
           />
         </React.Fragment>
       )}
 
-    {(role === 1) && (
+      {(role === 1) && (
         <React.Fragment>
-          <Drawer.Screen name="Raise A Query" component={QueryListing}
+          <Drawer.Screen name="Manage Query" component={QueryListing}
             options={{
               drawerIcon: ({ focused, color, size }) => (
-                <FontAwesome5 name="question" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : '#202020'} />
-              ),
+                <Icon name="message-question-outline" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />),
 
             }}
           />
         </React.Fragment>
-      )} 
-<Drawer.Screen name="Delete Account" component={DeleteAccountScreen}
-            options={{
-              drawerIcon: ({ focused, color, size }) => (
-                <AntDesign name="deleteuser" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : '#202020'} />
-              ),
+      )}
+      <Drawer.Screen name="Delete Account" component={DeleteAccountScreen}
+        options={{
+          drawerIcon: ({ focused, color, size }) => (
+            <AntDesign name="deleteuser" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : '#202020'} />
+          ),
 
-            }}
-          />
+        }}
+      />
 
     </Drawer.Navigator>
   );

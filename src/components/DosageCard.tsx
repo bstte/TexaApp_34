@@ -45,7 +45,7 @@ const DosageCard: React.FC<Dosagedataprops> = ({ props, index, onDelete, navigat
                                         message:response.data.message
                                     })
                                     onDelete(id);
-                                    console.log("delete respone", response.data)
+                                    // console.log("delete respone", response.data)
                                 }
                             }
                         },

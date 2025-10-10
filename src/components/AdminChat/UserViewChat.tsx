@@ -26,7 +26,7 @@ const UserViewChat: React.FC<Message> = ({ time, message }) => {
         try {
             SetIsLoading(true)
             const docUrl = fullImage;
-            console.log("doc url",docUrl)
+            // console.log("doc url",docUrl)
             const { config, fs } = RNFetchBlob;
             const { DocumentDir } = fs.dirs;
     

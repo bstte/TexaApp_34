@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Platform,PermissionsAndroid,PermissionStatus } from 'react-native'
+import { View, Text, StyleSheet, Modal, TouchableOpacity, Platform, PermissionsAndroid, PermissionStatus } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from "react-native-responsive-dimensions";
@@ -19,18 +19,6 @@ const CustomImageModal: React.FC<ImageModal> = ({ togglevisible,onclose, handelI
     const toggleModal = () => {
         onclose(false);
       };
-    const compressAndResizeImage = async (imagePath) => {
-        const compressedImage = await ImageResizer.createResizedImage(
-            imagePath,
-            200, // Set your desired maximum width
-            200, // Set your desired maximum height
-            'JPEG', // Image format
-            50, // Image quality (adjust as needed)
-            0 // Image rotation (0, 90, 180, or 270)
-        );
-
-        return compressedImage;
-    };
 
     // here img picker code
     const Camera = async () => {
@@ -40,18 +28,17 @@ const CustomImageModal: React.FC<ImageModal> = ({ togglevisible,onclose, handelI
             const permissionResult = await request(cameraPermission);
 
             if (permissionResult === RESULTS.GRANTED) {
-                console.log('Camera permission granted');
+                
 
                 const response = await ImagePicker.openCamera({
-                    width: 300,
-                    height: 400,
-                    cropping: true,
+                    compressImageQuality: 0.8,
+                    compressImageMaxWidth: 1000,
+                    compressImageMaxHeight: 1000,
                 });
 
-                console.log('Image picker response:', response);
-                const compressedImage = await compressAndResizeImage(response.path);
-                handelImage(compressedImage.uri)
-
+                // console.log('Image picker response:', response);
+                // const compressedImage = await compressAndResizeImage(response.path);
+                handelImage(response.path)
 
             } else {
                 console.log('Camera permission denied');
@@ -72,13 +59,14 @@ const CustomImageModal: React.FC<ImageModal> = ({ togglevisible,onclose, handelI
           console.log('Gallery permission granted');
           
           const response = await ImagePicker.openPicker({
-            width: 300,
-            height: 400,
-            cropping: true,
+            // multiple: multipleImage,
+            compressImageQuality: 0.8,   // 0 to 1 (70% quality)
+            compressImageMaxWidth: 1000, // max width (px)
+            compressImageMaxHeight: 1000, // max height (px)
+            cropping: false, // true karoge to crop UI khulega
           });
     
-          const compressedImage = await compressAndResizeImage(response.path);
-          handelImage(compressedImage.uri);
+          handelImage(response.path);
         // } else {
         //   console.log('Gallery permission denied');
         // }
@@ -96,22 +84,25 @@ const CustomImageModal: React.FC<ImageModal> = ({ togglevisible,onclose, handelI
                 transparent={true}
 
             >
-                   <TouchableWithoutFeedback onPress={toggleModal}>
+                <TouchableWithoutFeedback onPress={toggleModal}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modal}>
+                        <View style={{alignItems:"center"}}>
                         <View style={styles.separator} />
+                        </View>
+                 
 
                         <TouchableOpacity onPress={Camera} style={styles.cameraContainer}>
-                            <Icon color="#00aaf0" name='camera' size={33} style={{ width: 40 }} />
+                            <Icon color="blue" name='camera' size={33} style={{ width: 40 }} />
                             <Text style={styles.text}>Take Photo</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={Gallery} style={styles.GalleryContainer}>
-                            <Icon color="#00aaf0" name='image' size={33} style={{ width: 40 }} />
+                            <Icon color="blue" name='image' size={33} style={{ width: 40 }} />
                             <Text style={styles.text}>Select From Gallery</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                <Text style={{ color: "#00aaf0", fontSize: responsiveFontSize(2),fontFamily:themeFamily.fontFamily }}>Close</Text>
+                <Text style={{ color: "blue", fontSize: responsiveFontSize(2.5) }}>Close</Text>
               </TouchableOpacity>
                     </View>
                    
@@ -153,21 +144,21 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 20,
     },
-    cameraContainer:{
+    cameraContainer: {
         flexDirection: "row", alignItems: "center", marginBottom: 14
     },
-    GalleryContainer:{
+    GalleryContainer: {
         flexDirection: "row", alignItems: "center"
     },
-    text:{
-        fontSize: 18, color: "#000", fontFamily:themeFamily.fontFamily
+    text: {
+        fontSize: 18, color: "#000", fontFamily: themeFamily.fontFamily
     },
     closeButton: {
         marginTop: responsiveHeight(3.2),
         padding: responsiveHeight(1.3),
         borderWidth: 1,
         borderRadius: responsiveHeight(0.5),
-       alignItems:"center",
+        alignItems: "center",
         borderColor: '#ccc',
-      },
+    },
 })

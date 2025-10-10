@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Image, Modal, Platform, ProgressBarAndroid, ScrollView, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
+import { Alert, FlatList, Image, Keyboard, Modal, Platform, ProgressBarAndroid, ScrollView, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { TextInput, TouchableOpacity, View } from "react-native";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -37,7 +37,7 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
     const [isImageModalVisible, setImageModalVisible] = React.useState(false)
 
     const handleSendMessage = () => {
-      
+
 
         onSendMessage(textmessage, selectedImages, selectedVideos, selectedDocuments);
         setTextMessage("");
@@ -98,7 +98,7 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
         }
     };
 
- 
+
 
 
     // const sortedMessages = [...messages].sort(
@@ -106,21 +106,8 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
     // );
     const sortedMessages = [...messages].sort(
         (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
-      );
-    
-      // 👇 Thank you message prepare
-    //   const lastMessage = messages[messages.length - 1];
-    //   const caseId = lastMessage?.case_id || "N/A";
-    
-    //   const thankYouMessage = {
-    //     id: "thankyou-msg",
-    //     type: "system",   // 👈 ye flag add kar diya
-    //     message: `Thank you for contacting the TEXAP Chatbot. Our Representative will contact you in 24-48 Hours. Your Ticket Number is ${caseId}`,
-    //     created_date: "",
-    //   };
-      
-    
-    //   const finalMessages = [...sortedMessages, thankYouMessage];
+    );
+
     const selectDocuments = async () => {
         try {
             const pickedDocuments = await DocumentPicker.pick({
@@ -147,7 +134,7 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
         setdocModalVisible(!docModalVisible)
     }
 
-  
+
     const truncatePlaceholder = (maxLength: number): string => {
         const text = 'Type ...'
         if (text?.length > maxLength) {
@@ -160,9 +147,9 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
 
     const displayMessage = ({ item: message }) => (
         <Message
-            key={message.id} 
+            key={message.id}
             time={message.created_date}
-            isRight={parseInt(message.sender_id) }
+            isRight={parseInt(message.sender_id)}
             message={message}
         />
     );
@@ -189,6 +176,25 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
 
         await FileViewer.open(uri, { displayName: name });
     }
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+    useEffect(() => {
+        const keyboardWillShow = Keyboard.addListener(
+            Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+            (e) => setKeyboardHeight(e.endCoordinates.height)
+        );
+
+        const keyboardWillHide = Keyboard.addListener(
+            Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+            () => setKeyboardHeight(0)
+        );
+
+        return () => {
+            keyboardWillShow.remove();
+            keyboardWillHide.remove();
+        };
+    }, []);
+
 
     return (
         <>
@@ -200,7 +206,7 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
 
                     data={sortedMessages}
                     renderItem={displayMessage}
-                    keyExtractor={(item, index) => `${item.id}-${index}`} 
+                    keyExtractor={(item, index) => `${item.id}-${index}`}
 
                     inverted contentContainerStyle={{ flexDirection: 'column-reverse' }}
                     onEndReached={() => {
@@ -214,14 +220,14 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
                         <View >
                             <View style={{ backgroundColor: "#00aaf0", alignSelf: "flex-end", paddingVertical: 7, paddingHorizontal: 8, borderRadius: 5, marginHorizontal: 10, maxWidth: responsiveWidth(70) }}>
                                 <Text style={{ color: "white", }}>{runningmsg}</Text>
-                                
-                            
-                            </View>
-                            <View style={{alignSelf:"flex-end",marginHorizontal: 10}}>
-                            <Text style={{ alignSelf: "flex-end", color: "black", marginHorizontal: 10 }}>Sending ...</Text>
-                            <ProgressBarAndroid styleAttr="Horizontal" />
 
-                                </View>
+
+                            </View>
+                            <View style={{ alignSelf: "flex-end", marginHorizontal: 10 }}>
+                                <Text style={{ alignSelf: "flex-end", color: "black", marginHorizontal: 10 }}>Sending ...</Text>
+                                <ProgressBarAndroid styleAttr="Horizontal" />
+
+                            </View>
                         </View>
                     ) : null
                 }
@@ -243,11 +249,11 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
                                         <Text style={styles.documentName}>{document.name}</Text>
                                         <Text style={styles.documentSize}>{(document.size / 1024).toFixed(2)} KB</Text>
                                     </TouchableOpacity>
-                                    <View style={{alignSelf:"flex-end",marginHorizontal: 10}}>
-                            <Text style={{ alignSelf: "flex-end", color: "black", marginHorizontal: 10 }}>Sending ...</Text>
-                            <ProgressBarAndroid styleAttr="Horizontal" />
+                                    <View style={{ alignSelf: "flex-end", marginHorizontal: 10 }}>
+                                        <Text style={{ alignSelf: "flex-end", color: "black", marginHorizontal: 10 }}>Sending ...</Text>
+                                        <ProgressBarAndroid styleAttr="Horizontal" />
 
-                                </View>
+                                    </View>
                                 </View>
 
 
@@ -357,7 +363,7 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
                 </View>
 
             </View>
-            <View style={styles.inputView}>
+            <View style={[styles.inputView, { marginBottom: keyboardHeight }]}>
                 <View style={{ position: 'relative' }}>
                     <TextInput
                         multiline
@@ -517,7 +523,7 @@ const styles = StyleSheet.create({
         fontSize: responsiveFontSize(2),
         marginHorizontal: responsiveHeight(0.2),
         // backgroundColor: Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.10)' : 'white',
-        borderColor:  Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.10)' : '#ddd',
+        borderColor: Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.10)' : '#ddd',
         borderWidth: 1,
         alignSelf: "center",
         // elevation: 3,
@@ -605,13 +611,13 @@ const styles = StyleSheet.create({
     documentName: {
         fontSize: 16,
         fontWeight: 'bold',
-        color:"#000"
+        color: "#000"
         // marginRight: 10,
     },
     documentSize: {
         fontSize: 14,
         color: '#000',
-        
+
     },
     modalContainer: {
         flex: 1,

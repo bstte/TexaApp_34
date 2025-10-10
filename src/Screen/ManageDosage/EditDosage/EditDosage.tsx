@@ -1,18 +1,10 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, TextInput, Image, Alert, SafeAreaView } from 'react-native'
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, Image, Alert } from 'react-native'
 import React, { useEffect } from 'react'
 import styles from './styles'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import api, { Image_Base_Url } from '../../../api/Api'
 import CustomHeader from '../../CustomHeader/CustomHeader'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker';
-import {
-    responsiveHeight,
-} from "react-native-responsive-dimensions";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import CustomImageModal from '../../../components/CustomImageModal'
-import CustomTextInput from '../../../components/CustomTextInput'
 import Loader from '../../../components/Loader'
 import SuccessMessage, { ErrorMessage } from '../../../components/Common/CustomTostMessage'
 import { useSelector } from 'react-redux'
@@ -20,7 +12,7 @@ import CustomEditDropdown from '../../../components/CustomEditDropdown'
 import CustomMultipleImagemodal from '../../../components/Common/CustomMultipleImagemodal'
 import { AxiosError } from 'axios'
 import { MultiSelect } from 'react-native-element-dropdown'
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 interface Editdosage {
     route: any
 }

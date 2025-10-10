@@ -21,10 +21,10 @@ const CustomMultipleImagemodal: React.FC<ImageModal> = ({ togglevisible, onclose
   const compressAndResizeImage = async (imagePath) => {
     const compressedImage = await ImageResizer.createResizedImage(
       imagePath,
-      200, // Set your desired maximum width
-      200, // Set your desired maximum height
+      800, // Set your desired maximum width
+      800, // Set your desired maximum height
       'JPEG', // Image format
-      50, // Image quality (adjust as needed)
+      100, // Image quality (adjust as needed)
       0 // Image rotation (0, 90, 180, or 270)
     );
 
