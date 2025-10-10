@@ -122,10 +122,6 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
                     });
                 });
             }
-
-
-
-            console.log(formData)
             const token = await AsyncStorage.getItem('token');
             if (token) {
                 setIsLoading(true)
