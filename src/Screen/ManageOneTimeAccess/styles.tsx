@@ -12,13 +12,13 @@ const styles=StyleSheet.create({
     },
     container:{
       flex:1,
-      backgroundColor:"#00aaf0",
+      // backgroundColor:"#00aaf0",
       width:responsiveWidth(100),
       height:responsiveHeight(100),
     },
     viewcontainer:{
       flex:1,
-      // backgroundColor:"#00aaf0",
+      backgroundColor:"#00aaf0",
       width:responsiveWidth(100),
       height:responsiveHeight(100),
     },

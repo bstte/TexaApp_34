@@ -130,7 +130,7 @@ const ChangePassword: React.FC<props> = ({ route, navigation }) => {
           behavior={Platform
             .OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // adjust if header overlaps
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0} // adjust if header overlaps
         >
             <ScrollView keyboardShouldPersistTaps="handled">
           <View style={styles.inputView}>

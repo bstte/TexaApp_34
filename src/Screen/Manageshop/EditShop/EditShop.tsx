@@ -325,7 +325,7 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
         <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
       >
         <View style={styles.maincontainer}>
           {isLoading ? <View style={styles.loader}>

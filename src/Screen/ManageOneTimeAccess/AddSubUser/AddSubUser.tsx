@@ -127,7 +127,7 @@ const AddSubUser: React.FC<Props> = ({ route, navigation }) => {
                 <KeyboardAvoidingView
                     style={{ flex: 1 }}
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
                 >
 
                     <View style={styles.maincontainer}>

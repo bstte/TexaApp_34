@@ -20,9 +20,6 @@ import {
 
 } from 'react-native';
 import styles from './Styles';
-// import Textinput from '../../components/Textinput';
-import Button from '../../components/Button';
-import { useNavigation } from '@react-navigation/native';
 import AgreeCheckbox from '../../components/AgreeCheckbox';
 import Popup from '../../components/Popup';
 import api from '../../api/Api';
@@ -32,10 +29,8 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../Reducer/slices/userSlice';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Loader from '../../components/Loader';
-import { Toast } from 'react-native-toast-message/lib/src/Toast'
 import SuccessMessage from '../../components/Common/CustomTostMessage';
 import messaging from '@react-native-firebase/messaging';
-import { handleApiError } from '../utils/handleApiError';
 
 
 
@@ -98,7 +93,6 @@ const Login: React.FC<loginprops> = (props) => {
     let deviceToken = '';
     try {
       deviceToken = await messaging().getToken();
-      console.log(deviceToken);
     } catch (error) {
       console.error('Error getting device token:', error);
     }
@@ -233,55 +227,8 @@ const Login: React.FC<loginprops> = (props) => {
       }
 
     }
-    // props.navigation.navigate('Dashbord');
-
-    // console.log('form data:', { email, password })
+   
   };
-
-  // const handleAdminLogin = async (credentials) => {
-  //   try {
-
-  //     // here check login credential
-  //     const response = await api.admin_login(credentials);
-  //     if (response.data.success === true) {
-
-  //       // dispatch(setUser(response.data.data.user))
-  //       const token = response.data.data.token;
-
-  //       const userresponse = await api.get_user(token)
-  //       if (userresponse.data.status === "success") {
-  //         SuccessMessage({
-  //           message: response.data.message
-  //         })
-  //         dispatch(setUser(userresponse.data.user))
-  //         setIsLoading(false)
-  //         await AsyncStorage.setItem("token", token);
-  //         await AsyncStorage.setItem("userId", `${response.data.data.user.id}`);
-
-
-  //         props.navigation.reset({
-  //           index: 0,
-  //           routes: [{ name: 'Home' }],
-  //         });
-
-  //       }
-
-  //     }
-
-  //   } catch (error) {
-  //     setIsLoading(false)
-  //     console.error("login error",error)
-  //     const axioserror = error as AxiosError;
-  //     console.log(axioserror.response?.data )
-  //     if (axioserror.response && axioserror.response.status === 400) {
-  //       setModalMessage(axioserror.response.data.message);
-  //       setModalVisible(true);
-  //       return
-  //     } else {
-  //       console.log("login error", error)
-  //     }
-  //   }
-  // }
 
 
   const onPressForgotPassword = () => {
@@ -308,7 +255,7 @@ const Login: React.FC<loginprops> = (props) => {
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
         >
           <ScrollView keyboardShouldPersistTaps="handled" >
             <View style={{ alignItems: "center" }}>

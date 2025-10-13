@@ -8,7 +8,6 @@ import store from './src/Reducer/rootReducer';
 import { toastConfig } from './toastConfig';
 import NetInfo from '@react-native-community/netinfo';
 import firebaseinitialize from './src/components/Common/firebaseinitialize';
-import messaging from '@react-native-firebase/messaging';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -38,30 +37,6 @@ const App = () => {
     const initializeFirebase = async () => {
       try {
         await firebaseinitialize();
-  
-        // 📍 Foreground notification (jab app open ho)
-        // const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
-        //   console.log("📩 Foreground Notification Received:", remoteMessage);
-        // });
-  
-        // 📍 Background se notification click par
-        // const unsubscribeOnNotificationOpenedApp = messaging().onNotificationOpenedApp(remoteMessage => {
-        //   console.log('📲 App opened from background by notification:', remoteMessage);
-        // });
-  
-        // 📍 App quit state me notification click par
-        // messaging()
-        //   .getInitialNotification()
-        //   .then(remoteMessage => {
-        //     if (remoteMessage) {
-        //       console.log('🚀 App opened from quit state by notification:', remoteMessage);
-        //     }
-        //   });
-  
-        // return () => {
-        //   unsubscribeOnMessage();
-        //   unsubscribeOnNotificationOpenedApp();
-        // };
   
       } catch (error) {
         console.error('❌ Error initializing Firebase:', error);
