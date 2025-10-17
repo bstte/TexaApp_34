@@ -200,8 +200,8 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
                     ) : null
                 }
 
-                <Textlabel title="Submited At:" value={props.created_at} />
-                <View style={styles.maincontainer} />
+<Textlabel title="Submited At:" value={props.created_at} />
+<View style={styles.maincontainer} />
 
                 <View style={{ flexDirection: "row", }}>
 
