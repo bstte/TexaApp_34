@@ -260,7 +260,7 @@ const Login: React.FC<loginprops> = (props) => {
           <ScrollView keyboardShouldPersistTaps="handled" >
             <View style={{ alignItems: "center" }}>
 
-              <Text style={styles.title}>T E X A</Text>
+              <Text style={styles.title}>T E X A P</Text>
               <Text style={styles.title2}>Login to your account</Text>
             </View>
 
