@@ -89,19 +89,19 @@ const RaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelete, on
     }
 
 
-    const viewquery = (user_id: number, case_id: number, shop_id: number) => {
-        navigation.navigate('ViewQuery', { user_id: user_id, case_id: case_id, shop_id: shop_id });
-    }
+    // const viewquery = (user_id: number, case_id: number, shop_id: number) => {
+    //     navigation.navigate('ViewQuery', { user_id: user_id, case_id: case_id, shop_id: shop_id });
+    // }
 
    
     return (
         <>
             <CommonCard>
             <Textlabel title="Ticket:" value={props.case_id} />
-                <Textlabel title="Query Title:" value={props.query_title} />
-                {/* <Textlabel title="Description:" value={props.description} /> */}
+                <Textlabel title="Subject:" value={props.query_title} />
+                <Textlabel title="Description:" value={props.description} />
                 <Textlabel title="Product:" value={props.product_name} />
-                <Textlabel title="Submited At:" value={props.created_at} />
+                <Textlabel title="Submitted At:" value={props.created_at} />
                 <View style={styles.maincontainer} />
 
                 <View style={{ flexDirection: "row", }}>
@@ -123,10 +123,10 @@ const RaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelete, on
                                 }
 
                             </View>
-
+{/* 
                             <TouchableOpacity onPress={() => { deleteraisequery(props.case_id) }} style={{ marginTop: responsiveHeight(0.5) }}>
                                 <Text><Icon name="delete" size={responsiveHeight(3)} color="green" /></Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                             <TouchableOpacity   onPress={() => onViewQuery(props.user_id, props.case_id, props.shop_id)}>
                                 <Text><EvilIcons name="eye" size={responsiveHeight(4.5)} color="green" /></Text>

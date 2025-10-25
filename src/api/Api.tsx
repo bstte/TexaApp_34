@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UserData, Credentials, ShopData, updateshopData, DosageData,UpdateDosage,equipmentdata,subuser,raisequery,updateprofile,resetcredentials,updatecredentials } from "./types";
+import { UserData, Credentials, ShopData, updateshopData, DosageData, UpdateDosage, equipmentdata, subuser, raisequery, updateprofile, resetcredentials, updatecredentials } from "./types";
 
 
 
@@ -20,7 +20,7 @@ const api = {
   register: (userData: UserData) => instance.post('/registered', userData),
   login: (credentials: Credentials) => instance.post('/login', credentials),
   admin_login: (credentials: Credentials) => instance.post('/admin-login', credentials),
-  get_contries:()=>instance.get('/countrys'),
+  get_contries: () => instance.get('/countrys'),
   get_user: (token: string) => instance.get('/get_user', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -38,22 +38,27 @@ const api = {
       Authorization: `Bearer ${token}`,
     }
   }),
+  reparsantative_dashboard_count: (userId: number, token: string) => instance.get(`/admin-query-count/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  }),
   logout: (token: string) => instance.get('/logout', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    
+
   }),
   deleteaccount: (token: string) => instance.delete('/delete-account', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    
+
   }),
 
-  
-  forget_password: (resetcredentials:resetcredentials) => instance.post('/forget-password',resetcredentials),
-  update_password: (updatecredentials:updatecredentials) => instance.post('/update-password',updatecredentials),
+
+  forget_password: (resetcredentials: resetcredentials) => instance.post('/forget-password', resetcredentials),
+  update_password: (updatecredentials: updatecredentials) => instance.post('/update-password', updatecredentials),
 
 
 
@@ -98,7 +103,7 @@ const api = {
     }
   }),
 
-  delete_shop_image:(id:number,token:string)=>instance.delete(`delete-shop-image/${id}`,{
+  delete_shop_image: (id: number, token: string) => instance.delete(`delete-shop-image/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -119,7 +124,7 @@ const api = {
       'Content-Type': 'multipart/form-data', // Add this header
     }
   }),
-  
+
   edit_dosage: (id: number, token: string) => instance.get(`/edit-dosage/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -142,12 +147,12 @@ const api = {
       Authorization: `Bearer ${token}`
     }
   }),
-  delete_dosage_front_image:(dosageId:number,token:string)=>instance.delete(`/delete-dosage-front-image/${dosageId}`,{
+  delete_dosage_front_image: (dosageId: number, token: string) => instance.delete(`/delete-dosage-front-image/${dosageId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   }),
-  delete_dosage_back_image:(dosageId:number,token:string)=>instance.delete(`/delete-dosage-back-image/${dosageId}`,{
+  delete_dosage_back_image: (dosageId: number, token: string) => instance.delete(`/delete-dosage-back-image/${dosageId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -158,15 +163,15 @@ const api = {
       Authorization: `Bearer ${token}`
     }
   }),
- 
 
-  dosage_items_add: (token:string,item: { dosage_name: string }) => instance.post(`/dosage-items-add`, item, {
+
+  dosage_items_add: (token: string, item: { dosage_name: string }) => instance.post(`/dosage-items-add`, item, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header
     }
   }),
-  dosage_model_number: (token:string,item: { dosage_number: string },modelId:any) => instance.post(`/dosage/model-number/${modelId}`, item, {
+  dosage_model_number: (token: string, item: { dosage_number: string }, modelId: any) => instance.post(`/dosage/model-number/${modelId}`, item, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header
@@ -210,12 +215,12 @@ const api = {
       'Content-Type': 'multipart/form-data', // Add this header
     }
   }),
-  delete_equipment_front_image:(equipmentId:number,token:string)=>instance.delete(`/delete-equipment-front-image/${equipmentId}`,{
+  delete_equipment_front_image: (equipmentId: number, token: string) => instance.delete(`/delete-equipment-front-image/${equipmentId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
   }),
-  delete_equipment_back_image:(equipmentId:number,token:string)=>instance.delete(`/delete-equipment-back-image/${equipmentId}`,{
+  delete_equipment_back_image: (equipmentId: number, token: string) => instance.delete(`/delete-equipment-back-image/${equipmentId}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -227,13 +232,13 @@ const api = {
     }
   }),
 
-  equiment_add: (token:string,item: any) => instance.post(`/equiment-add`, item, {
+  equiment_add: (token: string, item: any) => instance.post(`/equiment-add`, item, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header
     }
   }),
-  equiment_machineName_add: (token:string,item: any,machineType:number) => instance.post(`add-equipment-machine-name/${machineType}`, item, {
+  equiment_machineName_add: (token: string, item: any, machineType: number) => instance.post(`add-equipment-machine-name/${machineType}`, item, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header
@@ -280,7 +285,7 @@ const api = {
       Authorization: `Bearer ${token}`,
     }
   }),
-  get_query_product: (shopId:string,equipmentId: string, token: string) => instance.get(`/get-query-product/${shopId}/${equipmentId}`, {
+  get_query_product: (shopId: string, equipmentId: string, token: string) => instance.get(`/get-query-product/${shopId}/${equipmentId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
@@ -296,12 +301,16 @@ const api = {
       Authorization: `Bearer ${token}`,
     }
   }),
-  admin_query: (userId: string, token: string) => instance.get(`/admin-query/${userId}`, {
+  admin_query: (userId: string, selectedCountry, selectedStatus, token: string) => instance.get(`/admin-query/${userId}`, {
+    params: {
+      country_id: selectedCountry,
+      status: selectedStatus,
+    },
     headers: {
       Authorization: `Bearer ${token}`,
     }
   }),
-  view_query: (user_id:number,case_id: number, token: string) => instance.get(`/view-query/${user_id}/${case_id}`, {
+  view_query: (user_id: number, case_id: number, token: string) => instance.get(`/view-query/${user_id}/${case_id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
@@ -332,48 +341,48 @@ const api = {
     }
   }),
 
-  GetChat: (CaseId: string, token: string,limit:number,page:number) => instance.get(`/getChat/${CaseId}/${limit}`, {
+  GetChat: (CaseId: string, token: string, limit: number, page: number) => instance.get(`/getChat/${CaseId}/${limit}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    params:{
-      page:page,
+    params: {
+      page: page,
     }
   }),
 
-  sendmsg: (sendMsg: FormData, token: string,sender_id:number,) => instance.post(`/chat/${sender_id}`, sendMsg, {
+  sendmsg: (sendMsg: FormData, token: string, sender_id: number,) => instance.post(`/chat/${sender_id}`, sendMsg, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header
     }
   }),
-  adminsendmsg: (sendMsg: FormData, token: string,sender_id:string,) => instance.post(`/admin-chat/${sender_id}`, sendMsg, {
+  adminsendmsg: (sendMsg: FormData, token: string, sender_id: string,) => instance.post(`/admin-chat/${sender_id}`, sendMsg, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header
     }
   }),
-  ChatCount: (CaseId: number,UserId:number, token: string) => instance.get(`/getChatCount/${UserId}/${CaseId}`, {
+  ChatCount: (CaseId: number, UserId: number, token: string) => instance.get(`/getChatCount/${UserId}/${CaseId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   }),
-  getChatCount_admin: (CaseId: number,adminId:any, token: string) => instance.get(`/getChatCount-admin/${adminId}/${CaseId}`, {
+  getChatCount_admin: (CaseId: number, adminId: any, token: string) => instance.get(`/getChatCount-admin/${adminId}/${CaseId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   }),
-  UpdateChat: (CaseId: number,UserId:number, token: string) => instance.get(`/ChatStatusUpdate/${CaseId}/${UserId}`, {
+  UpdateChat: (CaseId: number, UserId: number, token: string) => instance.get(`/ChatStatusUpdate/${CaseId}/${UserId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   }),
-  AdminChatUpdate: (CaseId: number,adminId:number, token: string) => instance.get(`/ChatStatusUpdate-admin/${CaseId}/${adminId}`, {
+  AdminChatUpdate: (CaseId: number, adminId: number, token: string) => instance.get(`/ChatStatusUpdate-admin/${CaseId}/${adminId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   }),
-  assignquery_to_reprsentative: (query: any, token: string,representative_id:string,) => instance.post(`/assign-to-query/${representative_id}`, query, {
+  assignquery_to_reprsentative: (query: any, token: string, representative_id: string,) => instance.post(`/assign-to-query/${representative_id}`, query, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'multipart/form-data', // Add this header

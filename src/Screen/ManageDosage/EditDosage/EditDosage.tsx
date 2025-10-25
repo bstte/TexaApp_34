@@ -332,7 +332,7 @@ const EditDosage: React.FC<Editdosage> = ({ route }) => {
                                 <CustomEditDropdown title='Model Name' data={dosageNumber} placeholder='Select Model Name' iconName='shopping' onSelect={(item) => setDosageData(prevData => ({
                                     ...prevData,
                                     model_no: item,
-                                }))} selectedValue={parseInt(DosageData.model_no)} isDisabled={false} />
+                                }))} selectedValue={parseInt(DosageData.model_no)} isDisabled={false} required={true}/>
 
                                 <Text style={styles.textinputlabel}>Product Name <Text style={{color:"red"}}>*</Text></Text>
                                 <MultiSelect
@@ -369,14 +369,14 @@ const EditDosage: React.FC<Editdosage> = ({ route }) => {
                                 <CustomEditDropdown title='No. of Pumps' data={numberArray} placeholder='Select No. of Pumps' iconName='shopping' onSelect={(item) => setDosageData(prevData => ({
                                     ...prevData,
                                     pupmps_no: item,
-                                }))} selectedValue={DosageData.pupmps_no?DosageData.pupmps_no.toString():''} isDisabled={false} />
+                                }))} selectedValue={DosageData.pupmps_no?DosageData.pupmps_no.toString():''} isDisabled={false} required={true}/>
 
 
 
                                 <CustomEditDropdown title='No. of Washers' data={numberArray} placeholder='Select No. of Washers' iconName='shopping' onSelect={(item) => setDosageData(prevData => ({
                                     ...prevData,
                                     washers_no: item,
-                                }))} selectedValue={DosageData.washers_no?DosageData.washers_no.toString():''} isDisabled={false} />
+                                }))} selectedValue={DosageData.washers_no?DosageData.washers_no.toString():''} isDisabled={false} required={true}/>
 
 
                                 <TouchableOpacity onPress={handledosageimages} style={styles.ImageContainer}>

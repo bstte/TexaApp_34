@@ -207,21 +207,21 @@ const EditEquipment: React.FC<EditEquipment> = ({ route }) => {
 
         if (token) {
             try {
-                const { front_image,install_year, back_image, ...dataWithoutImages } = EditEquipmetnData;
+                const { front_image, install_year, back_image, ...dataWithoutImages } = EditEquipmetnData;
 
-                        // Validate Installation Year
-const currentYear = new Date().getFullYear();
-const year = parseInt(install_year, 10);
+                // Validate Installation Year
+                const currentYear = new Date().getFullYear();
+                const year = parseInt(install_year, 10);
 
-if (
-  !install_year ||                      // Empty check
-  isNaN(year) ||                           // Not a number
-  install_year.length !== 4 ||          // Not a 4-digit year
-  year < 1900 || year > currentYear        // Invalid year range
-) {
-  ErrorMessage({ message: "Please enter a valid Installation Year" });
-  return false;
-}
+                if (
+                    !install_year ||                      // Empty check
+                    isNaN(year) ||                           // Not a number
+                    install_year.length !== 4 ||          // Not a 4-digit year
+                    year < 1900 || year > currentYear        // Invalid year range
+                ) {
+                    ErrorMessage({ message: "Please enter a valid Installation Year" });
+                    return false;
+                }
                 const equipmentdata = convertToFormData(dataWithoutImages);
                 if (frontBase64Image) {
                     equipmentdata.append('front_image', {
@@ -540,7 +540,7 @@ if (
                                             ...prevData,
                                             install_year: InstalationYear
                                         }))
-                                    }} keyboardType='default' />
+                                    }} keyboardType='default' required={true} />
 
                                     {showmachinetype ?
                                         <>

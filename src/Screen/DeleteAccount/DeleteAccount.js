@@ -5,6 +5,7 @@ import api from "../../api/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { handleApiError } from "../utils/handleApiError";
 const DeleteAccountScreen = () => {
 
     const navigation = useNavigation();
@@ -37,6 +38,7 @@ const DeleteAccountScreen = () => {
             }
 
         } catch (error) {
+            handleApiError(error,'delete account error')
             console.error("delete account error:", error)
         }
     };

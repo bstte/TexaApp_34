@@ -22,6 +22,7 @@ import { themeFamily } from '../../theme';
 import Dashboard from '../dashbord/Dashboard';
 import QueryListing from '../AdminQuery/AdminRaiseQuery/QueryListing';
 import DeleteAccountScreen from '../DeleteAccount/DeleteAccount';
+import AdminDashboard from '../AdminDashboard/AdminDashboard';
 
 
 const Drawer = createDrawerNavigator();
@@ -97,15 +98,22 @@ const DrawerNavigator = () => {
             }}
           />
 
-          <Drawer.Screen name="Create One Time Access" component={ViewOneTimeAccess}
+          <Drawer.Screen name="Create Sub User" component={ViewOneTimeAccess}
             options={{
               drawerIcon: ({ focused, color, size }) => (
-                <Icon name="key-outline" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
+                <AntDesign name="adduser" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
               )
             }}
           />
 
+          <Drawer.Screen name="Delete Account" component={DeleteAccountScreen}
+            options={{
+              drawerIcon: ({ focused, color, size }) => (
+                <AntDesign name="deleteuser" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : '#202020'} />
+              ),
 
+            }}
+          />
 
         </React.Fragment>
       )}
@@ -126,6 +134,14 @@ const DrawerNavigator = () => {
 
       {(role === 1) && (
         <React.Fragment>
+          <Drawer.Screen name="Dashboard" component={AdminDashboard}
+            options={{
+              drawerIcon: ({ focused, color, size }) => (
+                <Icon name="view-dashboard" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : 'black'} />
+              )
+            }}
+          />
+
           <Drawer.Screen name="Manage Query" component={QueryListing}
             options={{
               drawerIcon: ({ focused, color, size }) => (
@@ -135,14 +151,7 @@ const DrawerNavigator = () => {
           />
         </React.Fragment>
       )}
-      <Drawer.Screen name="Delete Account" component={DeleteAccountScreen}
-        options={{
-          drawerIcon: ({ focused, color, size }) => (
-            <AntDesign name="deleteuser" size={responsiveHeight(3.3)} color={focused ? '#00aaf0' : '#202020'} />
-          ),
 
-        }}
-      />
 
     </Drawer.Navigator>
   );

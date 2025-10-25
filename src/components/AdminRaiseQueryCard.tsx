@@ -43,11 +43,11 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
 
     const GetCounting = async () => {
         const token = await AsyncStorage.getItem('token');
-       
-        const adminId=`admin_${props.admin_id}`
+
+        const adminId = `admin_${props.admin_id}`
         if (token) {
             try {
-                const response = await api.getChatCount_admin(props.case_id,adminId, token)
+                const response = await api.getChatCount_admin(props.case_id, adminId, token)
                 // console.log("response chat", response.data)
                 SetChatCounting(response.data)
             } catch (error) {
@@ -62,9 +62,9 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
         value: representative.id
     })) || []
 
-    useEffect(()=>{
+    useEffect(() => {
         GetCounting()
-    },[props])
+    }, [props])
     // useFocusEffect(
     //     React.useCallback(() => {
     //         GetCounting()
@@ -125,7 +125,7 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
 
 
 
-    const AdminChat = (user_id: number, case_id: number,adminId: number, item: any) => {
+    const AdminChat = (user_id: number, case_id: number, adminId: number, item: any) => {
         navigation.navigate('AdminChatPage', {
             user_id: user_id,
             case_id: case_id,
@@ -161,13 +161,15 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
     return (
         <>
             <CommonCard>
-              
 
+
+                <Textlabel title="Shop Name:" value={props.shop_name} />
+                <Textlabel title="Country:" value={props.country_name} />
                 <Textlabel title="Ticket:" value={props.case_id} />
-                <Textlabel title="Query Title:" value={props.query_title} />
-                {/* <Textlabel title="Description:" value={props.description} /> */}
+                <Textlabel title="Subject:" value={props.query_title} />
+                <Textlabel title="Description:" value={props.description} />
                 <Textlabel title="Product:" value={props.product_name} />
-              
+                <Textlabel title="Status:" value={props.status} />
                 {
                     role === 1 && user_type === 0 ? (
                         <Dropdown
@@ -175,11 +177,11 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
                             inputSearchStyle={styles.inputSearchStyle}
-                            itemTextStyle={{color:"#202020"}}
+                            itemTextStyle={{ color: "#202020" }}
                             selectedTextProps={{
                                 style: {
                                     fontSize: 18,
-                                    fontWeight:"400",
+                                    fontWeight: "400",
                                     color: '#202020',
                                 },
                             }}
@@ -200,8 +202,8 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
                     ) : null
                 }
 
-<Textlabel title="Submited At:" value={props.created_at} />
-<View style={styles.maincontainer} />
+                <Textlabel title="Submitted At:" value={props.created_at} />
+                <View style={styles.maincontainer} />
 
                 <View style={{ flexDirection: "row", }}>
 
@@ -228,9 +230,9 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
 
                             </View>
 
-                            <TouchableOpacity onPress={() => { deleteraisequery(props.case_id) }} style={{ marginTop: responsiveHeight(0.5) }}>
+                            {/* <TouchableOpacity onPress={() => { deleteraisequery(props.case_id) }} style={{ marginTop: responsiveHeight(0.5) }}>
                                 <Text><Icon name="delete" size={responsiveHeight(3)} color="green" /></Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
 
                             <TouchableOpacity onPress={() => { viewquery(props.user_id, props.case_id, props.shop_id) }}>
                                 <Text><EvilIcons name="eye" size={responsiveHeight(4.5)} color="green" /></Text>
@@ -300,7 +302,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderBottomColor: 'gray',
         borderBottomWidth: 0.5,
-       
+
     },
     icon: {
         marginRight: 5,
@@ -308,17 +310,17 @@ const styles = StyleSheet.create({
     placeholderStyle: {
         fontSize: 16,
         fontWeight: "500",
-        
+
     },
     selectedTextStyle: {
         fontSize: 16,
-      
+
     },
 
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
-        
+
     },
 
 })

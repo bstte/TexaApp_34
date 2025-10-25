@@ -33,7 +33,7 @@ const Profile = (props) => {
     const [editprofileimg, seteditprofileimg] = React.useState('');
     const [phone, setphone] = useState(userData ? (userData.phone ? userData.phone.toString() : '') : '');
     const role = userData && userData.role;
-
+// console.log("user ",userData)
     const [successmsg, setsuccessmsg] = React.useState<string>('');
     const [selectedItem, setSelectedItem] = React.useState(null);
     const [selectedCallingCode, setselectedCallingCode] = React.useState(null);
@@ -85,6 +85,7 @@ const Profile = (props) => {
                 setIsLoading(true)
                 const response = await api.user_update(userId, token, updateprofile);
                 setIsLoading(false);
+                console.log("update profile",response.data)
                 if (response.data.success === true) {
                     
                     SuccessMessage({
@@ -93,7 +94,7 @@ const Profile = (props) => {
                     const updatedUserData = {
                         ...userData,
                         ...response.data.data,
-                        country: userData.country,
+                        // country: userData.country,
                     };
 
                     dispatch(setUser(updatedUserData));
@@ -149,7 +150,7 @@ const Profile = (props) => {
                                     <TouchableOpacity onPress={handleImageModalVisible} style={styles.updateprofileimg}>
                                         {editprofileimg || profileImage ? (
                                             <Image
-                                                source={editprofileimg ? { uri: editprofileimg } : { uri: `${Image_Base_Url}/${profileImage}` }}
+                                                source={editprofileimg ? { uri: editprofileimg } : { uri: `${Image_Base_Url}/images/user/${profileImage}` }}
                                                 style={styles.profileimg}
                                             />
                                         ) : (

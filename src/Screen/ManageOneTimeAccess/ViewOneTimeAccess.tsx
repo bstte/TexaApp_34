@@ -88,7 +88,7 @@ const ViewOneTimeAccess: React.FC<subprops> = (props) => {
                 <View style={styles.imgcontainer}>
                     {userData.profile_photo_path ? (
 
-                        <Image source={{ uri: `${Image_Base_Url}/${userData.profile_photo_path}` }} style={styles.profileimg} />
+                        <Image source={{ uri: `${Image_Base_Url}/images/user/${userData.profile_photo_path}` }} style={styles.profileimg} />
 
                     ) :
                         <Image source={require('../../assets/img/default_profile.jpg')} style={{ width: 40, height: 40, borderRadius: 100, }} />}

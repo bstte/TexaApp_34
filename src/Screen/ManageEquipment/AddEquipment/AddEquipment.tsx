@@ -585,7 +585,7 @@ const AddEquipment: React.FC<EquipmentProps> = ({ route, navigation }) => {
                                     placeholder="Select Capacity"
                                     onSelect={handleSelectWeight}
                                 />
-                                <CustomTextInput title='Installation Year' value={InstalationYear} placeholder='Installation Year' onChangeText={(InstalationYear) => setInstalationYear(InstalationYear)} keyboardType="phone-pad" />
+                                <CustomTextInput title='Installation Year' value={InstalationYear} placeholder='Installation Year' onChangeText={(InstalationYear) => setInstalationYear(InstalationYear)} keyboardType="phone-pad" required={true}/>
                                 {showmachinetype ?
                                     <>
                                         <CustomDropdown

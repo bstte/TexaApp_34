@@ -57,6 +57,8 @@ export default function ChatBotScreen({ route }) {
   const [isOther, setIsOther] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const [UserShop, setUserShop] = useState<any[]>([]);
+  const [contactMethod, setContactMethod] = useState<string | null>(null);
+  const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: string }>({});
 
 
   useEffect(() => {
@@ -75,6 +77,16 @@ export default function ChatBotScreen({ route }) {
       if (response.data.success === true) {
         setUserShop(response.data.data)
         setChatHistory([
+
+          {
+            from: 'bot',
+            text: 'Hi TESTER BETAS, Welcome to TEXA Support !!'
+          },
+          {
+            from: 'bot',
+            text: "I am TEXA's Virtual Assistant, here to help you with your queries and provide seamless support."
+          },
+
           { from: 'bot', text: 'Please select your shop:', type: 'options', options: response.data.data.map((s: any) => s.shop_name) }
         ]);
       }
@@ -112,6 +124,9 @@ export default function ChatBotScreen({ route }) {
         ...prev,
         { from: 'user', text: answer, questionId: 'shop' }
       ]);
+
+      setSelectedOptions(prev => ({ ...prev, shop: answer })); // ✅ highlight fix
+
       if (selectedShop) setSelectedShop(selectedShop);
       setTimeout(() => {
         setCurrentStep(0);
@@ -121,9 +136,17 @@ export default function ChatBotScreen({ route }) {
     }
 
     const currentQ = questions[currentStep];
+    if (currentQ && !isOther) {
+      setSelectedOptions(prev => ({
+        ...prev,
+        [currentQ.id]: answer
+      }));
+    }
 
     // 👉 Agar "Other" select hua, to abhi chat me kuch mat dalo
     if (currentQ?.type === 'options' && answer === 'Other') {
+      setSelectedOptions(prev => ({ ...prev, [currentQ.id]: 'Other' }));
+
       setIsOther(true);
       setIsAnswering(false); // 👈 Other ke case me turant unlock
 
@@ -147,6 +170,24 @@ export default function ChatBotScreen({ route }) {
       return;
     }
 
+
+    if (currentQ?.id === 10) {
+      let placeholderText = '';
+
+      if (answer === 'WhatsApp') {
+        placeholderText = 'Enter your WhatsApp number';
+      } else if (answer === 'Email') {
+        placeholderText = 'Enter your E-mail ID';
+      } else if (answer === 'Phone Call') {
+        placeholderText = 'Enter your Phone number';
+      } else {
+        placeholderText = `Enter your ${answer}`;
+      }
+
+      setContactMethod(placeholderText);
+    }else{
+      setContactMethod(null)
+    }
     // Normal flow (Other ke alawa)
     setChatHistory(prev => [
       ...prev,
@@ -241,105 +282,122 @@ export default function ChatBotScreen({ route }) {
     });
 
     const token = await AsyncStorage.getItem('token');
-// console.log("formData",formData)
+    // console.log("formData",formData)
     if (token) {
       try {
         setIsLoading(true);
         const response = await api.chat_query_create(formData, token)
         setIsLoading(false);
         SuccessMessage({
-          message: `Your Query has been submitted successfully`
+          message: `Query raised successfully`
         });
-        
+
         // ⏳ Wait for 2 seconds before calling onFinish
         setTimeout(() => {
           onFinish();
-         
+
         }, 2000);
       } catch (error: any) {
         setIsLoading(false);
-       handleApiError(error,"query time error")
+        handleApiError(error, "query time error")
       }
 
-      // console.log(formData)
     }
 
   };
 
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => setKeyboardHeight(e.endCoordinates.height)
+    );
+
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setKeyboardHeight(0)
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
   return (
     <SafeAreaView style={{ flex: 1 }} >
-      <CustomHeader title="Texa Chatbot" imgSource={require('../../assets/img/profile_img.png')} />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0} 
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
-            <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 20 }} ref={scrollRef}>
-              {chatHistory.map((msg, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.messageBubble,
-                    msg.from === 'bot' ? styles.botBubble : styles.userBubble
-                  ]}
-                >
-                  <Text style={{ color: msg.from === 'bot' ? '#000' : '#fff' }}>{msg.text}</Text>
+      <CustomHeader title="Texap Chatbot" imgSource={require('../../assets/img/profile_img.png')} />
 
-                  {msg.type === 'options' && msg.from === 'bot' && (
-                    <View style={{ marginTop: 5 }}>
-                      {msg.options?.map((opt, i) => {
-                        const isCurrent =
-                          currentStep === -1 || questions[currentStep]?.text === msg.text;
-                        return (
-                          <TouchableOpacity
-                            key={i}
-                            style={styles.optionBtn}
-                            onPress={isCurrent ? () => handleAnswer(opt) : undefined}
-                            disabled={!isCurrent}
-                          >
-                            <Text style={styles.optionText}>{opt}</Text>
+      <View style={{ flex: 1 }}>
+        <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingBottom: 20 }} ref={scrollRef}>
+          {chatHistory.map((msg, index) => (
+            <View
+              key={index}
+              style={[
+                styles.messageBubble,
+                msg.from === 'bot' ? styles.botBubble : styles.userBubble
+              ]}
+            >
+              <Text style={{ color: msg.from === 'bot' ? '#000' : '#fff' }}>{msg.text}</Text>
 
-                          </TouchableOpacity>
-                        );
-                      })}
+              {msg.type === 'options' && msg.from === 'bot' && (
+                <View style={{ marginTop: 5 }}>
+                  {msg.options?.map((opt, i) => {
+                    const isCurrent =
+                      currentStep === -1 || questions[currentStep]?.text === msg.text;
+                    const q = questions.find(q => q.text === msg.text);
+                    const isSelected =
+                      (q && selectedOptions[q.id] === opt) ||
+                      (msg.text === 'Please select your shop:' && selectedOptions.shop === opt);
+                    return (
+                      <TouchableOpacity
+                        key={i}
+                        style={[
+                          styles.optionBtn,
+                          isSelected && { backgroundColor: '#4CAF50', borderColor: '#388E3C' }
+                        ]}
+                        onPress={isCurrent ? () => handleAnswer(opt) : undefined}
+                        disabled={!isCurrent}
+                      >
+                        <Text style={styles.optionText}>{opt}</Text>
 
-                    </View>
-                  )}
+                      </TouchableOpacity>
+                    );
+                  })}
 
-                  {msg.type === 'file' && msg.from === 'bot' && (
-                    <TouchableOpacity style={styles.optionBtn} onPress={pickMedia}>
-                      <Text>📎 Attach picture or video</Text>
-                    </TouchableOpacity>
-                  )}
-
-                  {msg.mediaUri && (
-                    <Image source={{ uri: msg.mediaUri }} style={{ width: 200, height: 200, marginTop: 5 }} resizeMode="contain" />
-                  )}
                 </View>
-              ))}
-            </ScrollView>
+              )}
 
-            {((currentStep < questions.length && questions[currentStep]?.type === 'text') || isOther) && (
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder={isOther ? 'Type your other answer...' : questions[currentStep]?.placeholder || 'Type your answer...'}
-                  value={inputValue}
-                  placeholderTextColor={"#787a7c"}
-                  onChangeText={setInputValue}
-                />
-                <TouchableOpacity style={styles.sendBtn} onPress={() => handleAnswer(inputValue)}>
-                  <Text style={{ color: '#fff' }}>Send</Text>
+              {msg.type === 'file' && msg.from === 'bot' && (
+                <TouchableOpacity style={styles.optionBtn} onPress={pickMedia}>
+                  <Text>📎 Attach picture or video</Text>
                 </TouchableOpacity>
-              </View>
-            )}
+              )}
 
+              {msg.mediaUri && (
+                <Image source={{ uri: msg.mediaUri }} style={{ width: 200, height: 200, marginTop: 5 }} resizeMode="contain" />
+              )}
+            </View>
+          ))}
+        </ScrollView>
+
+        {((currentStep < questions.length && questions[currentStep]?.type === 'text') || isOther) && (
+          <View style={[styles.inputContainer, { marginBottom: keyboardHeight }]}>
+            <TextInput
+              style={styles.input}
+              placeholder={isOther ? 'Type your other answer...' : contactMethod ? `${contactMethod}` : questions[currentStep]?.placeholder || 'Type your answer...'}
+              value={inputValue}
+              placeholderTextColor={"#787a7c"}
+              onChangeText={setInputValue}
+            />
+            <TouchableOpacity style={styles.sendBtn} onPress={() => handleAnswer(inputValue)}>
+              <Text style={{ color: '#fff' }}>Send</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+        )}
+
+      </View>
+
 
       <Loader loading={isLoading} />
     </SafeAreaView>

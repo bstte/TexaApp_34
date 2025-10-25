@@ -34,14 +34,12 @@ const styles = StyleSheet.create({
     nametitle: {
       marginRight: responsiveHeight(1),
       fontSize: responsiveFontSize(2),
-      textAlign: 'justify',
+      // textAlign: 'justify',
       fontWeight: '600',
       color: '#202020',
     },
     namevalue: {
-      flex:1,
-      fontSize: responsiveFontSize(2),
-      color: '#202020',
+   
       
       fontWeight: '400',
     },

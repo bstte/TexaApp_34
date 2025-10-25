@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, TextInput, FlatList,RefreshControl } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../api/Api';
@@ -47,7 +47,7 @@ const Raise_query_list: React.FC<props> = (props) => {
         const response = await api.get_query_list(userId, token)
 
         const dataArray = Object.values(response.data.data);
-        // console.log("listing data",dataArray)
+        // console.log("listing data", dataArray)
         if (Array.isArray(dataArray)) {
           setraisequeryData(dataArray);
 
@@ -69,22 +69,47 @@ const Raise_query_list: React.FC<props> = (props) => {
     }
   }
 
+  // const getadminlist = async (case_id) => {
 
+
+  // }
   const handledeleteraisequeryDeletion = (deletdraisequery: number) => {
- 
+
     setraisequeryData(prevraisequery => prevraisequery.filter(raisequery => raisequery.case_id !== deletdraisequery));
   };
 
   const NavigateOnViewQuery = (user_id: number, case_id: number, shop_id: number) => {
     props.navigation.navigate('ViewQuery', { user_id, case_id, shop_id });
   };
-  
-  const NavigateOnAdminChatList = (user_id: number, case_id: number, shop_id: number) => {
-    props.navigation.navigate('AdminChatList', { user_id, case_id, shop_id });
-  };
-  
 
-  
+  const NavigateOnAdminChatList = async (user_id, case_id, shop_id) => {
+    const token = await AsyncStorage.getItem('token');
+    try {
+      if (token) {
+        const response = await api.Getadminlist(case_id, token);
+        if (response.data.success === true && Array.isArray(response.data.data) && response.data.data.length > 0) {
+          const firstAdmin = response.data.data[0];
+          // console.log("chat response", firstAdmin);
+
+          props.navigation.navigate("AdminChat", {
+            user_id,
+            case_id,
+            shop_id,
+            adminId: `admin_${firstAdmin.id}`,
+            item: firstAdmin
+          });
+        } else {
+          console.log("No admin data found");
+        }
+      }
+    } catch (error) {
+      console.log("getadminlist", error);
+    }
+  };
+
+
+
+
   const renderItem = ({ item, index }: { item: raisequery, index: number }) => (
     <RaiseQueryCard
       props={item}
@@ -94,7 +119,7 @@ const Raise_query_list: React.FC<props> = (props) => {
       onOpenChatBot={NavigateOnAdminChatList}
     />
   );
-  
+
 
   const handlequeryadition = () => {
     setCheckqueryData(!checkqueryData)
@@ -108,16 +133,16 @@ const Raise_query_list: React.FC<props> = (props) => {
   const onOpenChatBot = () => {
     props.navigation.navigate('ChatBotScreen', {
       onFinish: () => {
-        props.navigation.navigate('Home', {
+        props.navigation.replace('Home', {
           screen: 'Raise A Query'
         });
-  
+
         handlequeryadition();
       }
     });
   };
-  
-  
+
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -132,7 +157,7 @@ const Raise_query_list: React.FC<props> = (props) => {
         <View style={styles.imgcontainer}>
           {userData.profile_photo_path ? (
 
-            <Image source={{ uri: `${Image_Base_Url}/${userData.profile_photo_path}` }} style={styles.profileimg} />
+            <Image source={{ uri: `${Image_Base_Url}/images/user/${userData.profile_photo_path}` }} style={styles.profileimg} />
 
           ) :
             <Image source={require('../../assets/img/default_profile.jpg')} style={styles.profileimg} />}
@@ -158,12 +183,12 @@ const Raise_query_list: React.FC<props> = (props) => {
         </TouchableOpacity>
         {filteredraisequeryData.length === 0 && isLoading === false ? (
           <CommonCard>
-            <Text style={{ justifyContent: "center", alignSelf: "center" ,color:"#000"}}>No Query Data</Text>
+            <Text style={{ justifyContent: "center", alignSelf: "center", color: "#000" }}>No Query Data</Text>
           </CommonCard>
         ) : (
 
           <FlatList
-          style={{flex:1,marginBottom:20}}
+            style={{ flex: 1, marginBottom: 20 }}
             refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => get_raise_query()} />}
             data={filteredraisequeryData}
             renderItem={renderItem}

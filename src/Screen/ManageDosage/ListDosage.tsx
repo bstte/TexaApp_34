@@ -130,7 +130,7 @@ const ListDosage: React.FC<dosageprops> = (props) => {
 
                     {userData.profile_photo_path ? (
 
-                        <Image source={{ uri: `${Image_Base_Url}/${userData.profile_photo_path}` }} style={styles.profileimg} />
+                        <Image source={{ uri: `${Image_Base_Url}/images/user/${userData.profile_photo_path}` }} style={styles.profileimg} />
 
                     ) :
                         <Image source={require('../../assets/img/default_profile.jpg')} style={styles.profileimg} />}

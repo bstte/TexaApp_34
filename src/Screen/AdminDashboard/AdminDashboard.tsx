@@ -1,92 +1,70 @@
-import { View, Text, TouchableOpacity, Image ,FlatList} from 'react-native';
-import React, { useEffect } from 'react';
-import Card from '../../components/Card';
-
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../../api/Api';
-import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
-import {
-  responsiveHeight,
-} from "react-native-responsive-dimensions";
-import styles from './styles'
-
-import { Image_Base_Url } from '../../api/Api';
-
+import api, { Image_Base_Url } from '../../api/Api';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+import { useSelector } from 'react-redux';
+import styles from './styles';
+import { useFocusEffect } from '@react-navigation/native';
 
-interface dashbordprops {
-  navigation: any
+interface dashboardProps {
+  navigation: any;
 }
 
-interface count {
-  shop: '0',
-  equipment: '0',
-  dosage: '0',
-  query: '0',
-}
-
-const Dashboard: React.FC<dashbordprops> = (props) => {
-
-  const [TotalCount, setTotalCount] = React.useState<count>({
-    shop: '0',
-    equipment: '0',
-    dosage: '0',
-    query: '0',
-  });
-
-  const userData = useSelector((state: any) => state.user.userData)
-
+const AdminDashboard: React.FC<dashboardProps> = (props) => {
+  const userData = useSelector((state: any) => state.user.userData);
   const profileimage = userData ? userData.profile_photo_path : '';
 
+  const [dashboardCount, setDashboardCount] = useState<any>({
+    close_query: 0,
+    open_query: 0,
+    process_query: 0,
+    hold_query: 0,
+    total: 0
+  });
 
   const data = [
-    { id: 1, title: 'Total Shops', total: TotalCount.shop, iconName: "store-outline", backgroundColor: "#ff6b6b", ScreenName:"Manage Shops" },
-    { id: 2, title: 'Total Equipments', total: TotalCount.equipment, iconName: "tools", backgroundColor: "#845EC2", ScreenName:"Manage Equipments"  },
-    { id: 3, title: 'Total Dosages', total: TotalCount.dosage, iconName: "flask-outline", backgroundColor: "#FFC75F", ScreenName:"Manage Dosages"  },
-    { id: 4, title: 'Total Queries', total: TotalCount.query, iconName: "comment-question-outline", backgroundColor: "#2C73D2", ScreenName:"Raise A Query"  },
+    { id: 1, title: 'Total Queries', total: dashboardCount.total, iconName: "file-document-outline", backgroundColor: "#1e88e5", ScreenName:"Manage Query"},
+    { id: 2, title: 'Open Queries', total: dashboardCount.open_query, iconName: "folder-open", backgroundColor: "#43a047",ScreenName:"Manage Query" },
+    { id: 3, title: 'Close Queries', total: dashboardCount.close_query, iconName: "check-circle", backgroundColor: "#e53935",ScreenName:"Manage Query" },
+    { id: 4, title: 'Hold Queries', total: dashboardCount.hold_query, iconName: "pause-circle", backgroundColor: "#fb8c00",ScreenName:"Manage Query" },
+    { id: 5, title: 'Processing Queries', total: dashboardCount.process_query, iconName: "progress-clock", backgroundColor: "#6a1b9a",ScreenName:"Manage Query" },
   ];
-  
+
   useEffect(() => {
-   
-    get_count();
-  }, [])
+    getCount();
+  }, []);
 
   const refreshData = async () => {
-    await get_count();
+    await getCount();
 
   };
+
   useFocusEffect(
     React.useCallback(() => {
       refreshData();
 
     }, []) // Empty dependency array to run the effect only on mount and unmount
   );
-
-  const get_count = async () => {
+  const getCount = async () => {
     const userId_string = await AsyncStorage.getItem('userId');
-
-
     const token = await AsyncStorage.getItem('token');
-
     if (userId_string && token) {
       const userId = parseInt(userId_string);
       try {
-        const response = await api.get_count(userId, token)
-        console.log("dashbord ",response.data)
-        if (response.data.success === true) {
-          setTotalCount(response.data)
+        const response = await api.reparsantative_dashboard_count(userId, token);
+        console.log("respo",response.data)
+        if (response.data.status) {
+          setDashboardCount(response.data.data);
         }
-
-
-
       } catch (error) {
-        console.log("view total count error:", error)
+        console.log("Dashboard count error:", error);
       }
-
     }
-  }
+  };
+
   const renderCard = ({ item }: any) => (
     <TouchableOpacity style={[styles.card, { backgroundColor: item.backgroundColor }]} onPress={()=>props.navigation.navigate(item.ScreenName)}>
       <Icon name={item.iconName} size={responsiveHeight(5)} color="#fff" />
@@ -124,12 +102,9 @@ const Dashboard: React.FC<dashbordprops> = (props) => {
           renderItem={renderCard}
           showsVerticalScrollIndicator={false}
         />
-        <View style={{flex:1, justifyContent: "center", alignItems: "center", marginTop: 10 }}>
-              <Text style={{color:"#000"}}>Version 2.6</Text>
-            </View>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Dashboard
+export default AdminDashboard;

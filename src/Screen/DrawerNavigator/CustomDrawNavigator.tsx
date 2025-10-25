@@ -62,7 +62,7 @@ const CustomDrawNavigator: React.FC<customeprops> = (props) => {
                 if (response.data.success === true) {
                   setIsLoading(false)
                   SuccessMessage({
-                    message: response.data.message
+                    message: "Logout Successfully"
                   })
                   await AsyncStorage.removeItem('token');
                   const resetAction = CommonActions.reset({
@@ -97,7 +97,7 @@ const CustomDrawNavigator: React.FC<customeprops> = (props) => {
         </View>
         <TouchableOpacity onPress={profile}>
           {profileImage ? (
-            <Image source={{ uri: `${Image_Base_Url}/${profileImage}` }} style={styles.profile_img} />
+            <Image source={{ uri: `${Image_Base_Url}//images/user/${profileImage}` }} style={styles.profile_img} />
           ) :
             <Image source={require('../../assets/img/default_profile.jpg')} style={styles.profile_img} />}
           <Text style={{marginTop:10,fontSize:16,color:"#00aaf0"}}>

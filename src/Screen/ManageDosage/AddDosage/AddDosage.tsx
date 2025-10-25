@@ -84,12 +84,18 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
             }
             if (ModelName === '') {
                 ErrorMessage({
-                    message: "The manufacturer field is required"
+                    message: "The Manufacturer field is required"
                 })
 
                 return false
             }
+            if (ModelNo === '') {
+                ErrorMessage({
+                    message: "The Model Name field is required"
+                })
 
+                return false
+            }
             if (selectmultipleProductNo.length === 0) {
                 ErrorMessage({
                     message: "The Product Name field is required"
@@ -97,6 +103,23 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
 
                 return false
             }
+
+            if (PumpsnNo === '') {
+                ErrorMessage({
+                    message: "The No. of Pumps field is required"
+                })
+
+                return false
+            }
+
+            if (WashersNo === '') {
+                ErrorMessage({
+                    message: "The No. of Washers field is required"
+                })
+
+                return false
+            }
+
             // const formData = new FormData();
             const formData = new FormData();
 
@@ -301,7 +324,7 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
                             <CustomDropdownWithAddItem title='Model Name' data={dosageNumber} placeholder='Select Model Name' onSelect={(item) => {
                                 setModelNo(item.value)
                                 SetaddmodelnameId('')
-                            }} addNewItem={AddModelName} selectedValue={addmodelnameId} />
+                            }} addNewItem={AddModelName} required={true} selectedValue={addmodelnameId} />
                             {/* <CustomTextInput title='Model No' value={ModelNo} placeholder="Model No" onChangeText={(ModelNo) => setModelNo(ModelNo)} /> */}
                             {/* <CustomTextInput title='Product No' value={ProductNo} placeholder="Product No" onChangeText={(ProductNo) => setProductNo(ProductNo)} /> */}
 
@@ -326,14 +349,7 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
                                 onChange={(selectedItems) => {
                                     setselectmultipleProductNo(selectedItems);
                                 }}
-                                // renderLeftIcon={() => (
-                                //   <AntDesign
-                                //     style={styles.icon}
-                                //     color="black"
-                                //     name="Safety"
-                                //     size={20}
-                                //   />
-                                // )}
+                             
                                 renderItem={(item) => renderProductItem(item, ProductNumber)}
                                 renderSelectedItem={(item, unSelect) => (
                                     <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
@@ -345,9 +361,9 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
                                 )}
                             />
 
-                            <CustomDropdown title='No. of Pumps' data={numberArray} placeholder='Select No. of Pumps' onSelect={(item) => setPumpsnNo(item.value)} />
+                            <CustomDropdown title='No. of Pumps' data={numberArray} placeholder='Select No. of Pumps' onSelect={(item) => setPumpsnNo(item.value)} required={true}/>
 
-                            <CustomDropdown title='No. of Washers' data={numberArray} placeholder='Select No. of Washers' onSelect={(item) => setWashersNo(item.value)} />
+                            <CustomDropdown title='No. of Washers' data={numberArray} placeholder='Select No. of Washers' onSelect={(item) => setWashersNo(item.value)} required={true}/>
 
                             <TouchableOpacity onPress={handledosageimages} style={styles.ImageContainer}>
                                 <Text style={{ fontSize: 17, color: "#333" }}>Add Image</Text>
@@ -367,44 +383,6 @@ const AddDosage: React.FC<AddShopProps> = ({ route, navigation }) => {
                                     </View>
                                 ))}
                             </View>
-                            {/* 
-                            <TouchableOpacity onPress={handleFrontImageModalVisible} style={styles.ImageContainer}>
-                                <Text style={styles.addimagecontainer}>Add Front Image</Text>
-                                <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
-                            </TouchableOpacity> */}
-                            {/* <View style={styles.selectedimgcontainer}>
-                                {frontBase64Image ? (
-                                    <View>
-                                        <Image source={{ uri: frontBase64Image }} style={styles.selectedimg} />
-                                        <TouchableOpacity
-                                            style={styles.deleteButton}
-                                            onPress={() => handleDeletefrontImage()}
-                                        >
-                                            <Text style={styles.deleteButtonText}>X</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ) : null}
-                            </View> */}
-                            {/* 
-                            <TouchableOpacity onPress={handleBackImageModalVisible} style={styles.ImageContainer}>
-                                <Text style={styles.addimagecontainer}>Add Back Image</Text>
-                                <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
-                            </TouchableOpacity> */}
-                            {/* <View style={styles.selectedimgcontainer}>
-                                {backimgBase64 ? (
-                                    <View >
-                                        <Image source={{ uri: backimgBase64 }} style={styles.selectedimg} />
-                                        <TouchableOpacity
-                                            style={styles.deleteButton}
-                                            onPress={() => handleDeletebackImage()}
-                                        >
-                                            <Text style={styles.deleteButtonText}>X</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ) : null}
-                            </View> */}
-
-
                         </View>
                     </ScrollView>
                     <TouchableOpacity onPress={submit} style={styles.addtext}>

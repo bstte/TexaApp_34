@@ -192,7 +192,7 @@ const Login: React.FC<loginprops> = (props) => {
         const userresponse = await api.get_user(token)
         if (userresponse.data.status === "success") {
           SuccessMessage({
-            message: response.data.message
+            message: 'Login successful'
           })
           dispatch(setUser(userresponse.data.user))
           setIsLoading(false)
