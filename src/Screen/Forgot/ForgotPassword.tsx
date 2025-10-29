@@ -103,7 +103,7 @@ const resetpassword=async()=>{
         {/* <Image source={require('../../assets/img/food.jpeg')} style={style.loginimg}/> */}
         <View style={{alignItems:"center"}}>
 
-        <Text style={styles.title}>T E X A</Text>
+        <Text style={styles.title}>T E X A P</Text>
         <Text style={styles.title2}>RESET PASSWORD</Text>
         <Text style={styles.resettext}>
             Enter your email address and we'll help reset your password

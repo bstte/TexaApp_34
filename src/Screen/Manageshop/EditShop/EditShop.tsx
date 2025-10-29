@@ -120,6 +120,7 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
     return pattern.test(email);
   };
 
+  // console.log("shopData", shopData)
   const submit = async () => {
     const updateshopData = new FormData();
 
@@ -137,43 +138,72 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
     // }
 
     if (shopData.shop.shop_name === '') {
-     
+
       ErrorMessage({
-        message: "The shop name field is required"
+        message: "Shop name is required"
       })
 
       return false
     }
 
-    if (shopData.shop.shop_name) {
-      if (shopData.shop.email === '') {
-       
-        ErrorMessage({
-          message: "Shop Email is required"
-        })
-  
-        return false
-      } else if (!isEmailValid(shopData.shop.email)) {
-        ErrorMessage({
-          message: "Invalid shop email format"
-        })
-  
-        return false
-     
-      }
+    if (shopData.shop.shop_contact_person === '') {
+
+      ErrorMessage({
+        message: "Contact person name is required"
+      })
+
+      return false
     }
 
 
-    if (Object.keys(selectedProductData).length === 0) {
-     
+    if (shopData.shop.email === '') {
+
       ErrorMessage({
-        message: "The application type field is required"
+        message: "Shop Email is required"
+      })
+
+      return false
+    } else if (!isEmailValid(shopData.shop.email)) {
+      ErrorMessage({
+        message: "Invalid shop email format"
       })
 
       return false
 
     }
 
+    if (shopData.shop.phone === '') {
+
+      ErrorMessage({
+        message: "Contact person number is required"
+      })
+
+      return false
+    }
+
+    // if (Object.keys(selectedProductData).length === 0) {
+
+    //   ErrorMessage({
+    //     message: "The application type field is required"
+    //   })
+
+    //   return false
+
+    // }
+    // Check if selectedProductData is empty or all values are empty arrays
+    const isEmptySelection =
+      !selectedProductData ||
+      Object.keys(selectedProductData).length === 0 ||
+      Object.values(selectedProductData).every((arr) => !arr || arr.length === 0);
+
+    if (isEmptySelection) {
+      ErrorMessage({
+        message: "application type is required"
+      });
+      return false;
+    }
+
+    // console.log("selectedProductData", selectedProductData)
     updateshopData.append('id', shopId);
     updateshopData.append('shop_name', shopData.shop.shop_name);
     updateshopData.append('shop_contact_person', shopData.shop.shop_contact_person);
@@ -323,109 +353,109 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
       <SafeAreaView style={styles.container}>
         <CustomHeader title="Edit Shop" imgSource={require('../../../assets/img/profile_img.png')} />
         <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
-      >
-        <View style={styles.maincontainer}>
-          {isLoading ? <View style={styles.loader}>
-            <ActivityIndicator size="large" color="gray" />
-          </View> :
-            <>
-              <ScrollView keyboardShouldPersistTaps="handled">
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
+        >
+          <View style={styles.maincontainer}>
+            {isLoading ? <View style={styles.loader}>
+              <ActivityIndicator size="large" color="gray" />
+            </View> :
+              <>
+                <ScrollView keyboardShouldPersistTaps="handled">
 
-                <CustomTextInput title='Shop Name' value={shopData.shop.shop_name} placeholder='Shop Name' onChangeText={shop_name => {
-                  setShopData(prevShopData => ({
-                    ...prevShopData,
-                    shop: {
-                      ...prevShopData.shop,
-                      shop_name: shop_name
-                    }
-                  }))
-                }} required={true}/>
+                  <CustomTextInput title='Shop Name' value={shopData.shop.shop_name} placeholder='Shop Name' onChangeText={shop_name => {
+                    setShopData(prevShopData => ({
+                      ...prevShopData,
+                      shop: {
+                        ...prevShopData.shop,
+                        shop_name: shop_name
+                      }
+                    }))
+                  }} required={true} />
 
-                <CustomTextInput title='Contact Person Name' value={shopData.shop.shop_contact_person} placeholder='Contact Person Name' onChangeText={shop_contact_person => {
-                  setShopData(prevShopData => ({
-                    ...prevShopData,
-                    shop: {
-                      ...prevShopData.shop,
-                      shop_contact_person: shop_contact_person
-                    }
-                  }))
-                }} />
+                  <CustomTextInput title='Contact Person Name' value={shopData.shop.shop_contact_person} placeholder='Contact Person Name' onChangeText={shop_contact_person => {
+                    setShopData(prevShopData => ({
+                      ...prevShopData,
+                      shop: {
+                        ...prevShopData.shop,
+                        shop_contact_person: shop_contact_person
+                      }
+                    }))
+                  }} required={true}/>
 
-                <CustomTextInput title='Shop Email' value={shopData.shop.email} placeholder='Shop Email' onChangeText={email => {
-                  setShopData(prevShopData => ({
-                    ...prevShopData,
-                    shop: {
-                      ...prevShopData.shop,
-                      email: email
-                    }
-                  }))
-                }} />
+                  <CustomTextInput title='Shop Email' value={shopData.shop.email} placeholder='Shop Email' onChangeText={email => {
+                    setShopData(prevShopData => ({
+                      ...prevShopData,
+                      shop: {
+                        ...prevShopData.shop,
+                        email: email
+                      }
+                    }))
+                  }} required={true}/>
 
-                <View style={styles.numbercontainer}>
-                  <Text style={styles.textinputlabel}>Contact Person Number</Text>
-                  <View style={{ width: "100%" }}>
-                    <TouchableOpacity style={styles.country_calling_code} onPress={handlecalling_code}>
-                      <Text style={styles.country_calling_code_text}>
-                        +{selectedItem ? selectedItem.calling_code : shopData.shop.country_code}
-                      </Text>
-                    </TouchableOpacity>
+                  <View style={styles.numbercontainer}>
+                    <Text style={styles.textinputlabel}>Contact Person Number <Text style={{color:"red"}}>*</Text></Text>
+                    <View style={{ width: "100%" }}>
+                      <TouchableOpacity style={styles.country_calling_code} onPress={handlecalling_code}>
+                        <Text style={styles.country_calling_code_text}>
+                          +{selectedItem ? selectedItem.calling_code : shopData.shop.country_code}
+                        </Text>
+                      </TouchableOpacity>
 
-                    <TextInput
-                      placeholderTextColor={'#787a7c'}
-                      style={styles.country_calling_code_textinput}
-                      placeholder="Contact Person Number"
-                      maxLength={10}
-                      keyboardType="phone-pad"
-                      value={shopData.shop.phone ? shopData.shop.phone.toString() : ''}
-                      onChangeText={phone => {
-                        setShopData(prevShopData => ({
-                          ...prevShopData,
-                          shop: {
-                            ...prevShopData.shop,
-                            phone: phone
-                          }
-                        }))
+                      <TextInput
+                        placeholderTextColor={'#787a7c'}
+                        style={styles.country_calling_code_textinput}
+                        placeholder="Contact Person Number"
+                        maxLength={10}
+                        keyboardType="phone-pad"
+                        value={shopData.shop.phone ? shopData.shop.phone.toString() : ''}
+                        onChangeText={phone => {
+                          setShopData(prevShopData => ({
+                            ...prevShopData,
+                            shop: {
+                              ...prevShopData.shop,
+                              phone: phone
+                            }
+                          }))
+                        }}
+                      />
+                    </View>
+                  </View>
+
+
+                  <View style={{ flex: 1 }}>
+                    <CountryDropdown
+                      onclose={handlecalling_code}
+                      togglevisible={isCountryDropdownVisible}
+                      onSelectCountry={(item) => {
+                        handleCountrySelect(item);
+                        setCountryDropdownVisible(false);
                       }}
                     />
                   </View>
-                </View>
+                  {/* application type with producs */}
+                  {isLoading ? <View style={styles.loader}>
+                    <ActivityIndicator size="large" color="gray" />
+                  </View> :
+                    <View style={{ marginTop: 20 }}>
+                      <Text style={styles.applicationlabel}>Application Type <Text style={{ color: "red" }}>*</Text></Text>
+                      {applicationTypes.map((applicationType) => (
+                        <View key={applicationType.value}>
 
+                          <TouchableOpacity onPress={() => openModal(applicationType.value)}>
+                            <View style={styles.applicationtypeContainer}>
+                              <Text style={styles.applicationTypelabel}>{applicationType.label} </Text>
+                              <Text style={{ fontSize: 23, color: "#00aaf0" }}> +</Text>
+                            </View>
+                          </TouchableOpacity>
 
-                <View style={{ flex: 1 }}>
-                  <CountryDropdown
-                    onclose={handlecalling_code}
-                    togglevisible={isCountryDropdownVisible}
-                    onSelectCountry={(item) => {
-                      handleCountrySelect(item);
-                      setCountryDropdownVisible(false);
-                    }}
-                  />
-                </View>
-                {/* application type with producs */}
-                {isLoading ? <View style={styles.loader}>
-                  <ActivityIndicator size="large" color="gray" />
-                </View> :
-                  <View style={{ marginTop: 20 }}>
-                    <Text style={styles.applicationlabel}>Application Type <Text style={{color:"red"}}>*</Text></Text>
-                    {applicationTypes.map((applicationType) => (
-                      <View key={applicationType.value}>
-
-                        <TouchableOpacity onPress={() => openModal(applicationType.value)}>
-                          <View style={styles.applicationtypeContainer}>
-                            <Text style={styles.applicationTypelabel}>{applicationType.label} </Text>
-                            <Text style={{ fontSize: 23, color: "#00aaf0" }}> +</Text>
-                          </View>
-                        </TouchableOpacity>
-
-                        <Modal
-                          visible={isModalVisible && selectedApplicationType === applicationType.value}
-                          animationType="slide"
-                          transparent={true}
-                        >
-                          {/* <TouchableWithoutFeedback onPress={closeProductModel}> */}
+                          <Modal
+                            visible={isModalVisible && selectedApplicationType === applicationType.value}
+                            animationType="slide"
+                            transparent={true}
+                          >
+                            {/* <TouchableWithoutFeedback onPress={closeProductModel}> */}
                             <View style={styles.modelContainer}>
                               <View style={styles.modelView}>
                                 <View style={{ alignItems: "center" }}>
@@ -482,35 +512,35 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
                                 </TouchableOpacity>
                               </View>
                             </View>
-                          {/* </TouchableWithoutFeedback> */}
-                        </Modal>
+                            {/* </TouchableWithoutFeedback> */}
+                          </Modal>
 
-                        {/* Display selected products for this application type */}
-                        {selectedProductData[applicationType.value]?.length > 0 && (
-                          <View style={{ marginTop: 10, display: "flex", width: "100%", justifyContent: "center", flexDirection: "row", flexWrap: "wrap" }}>
-                            {selectedProductData[applicationType.value].map((productId) => {
-                              const product = applicationType.products.find((p) => p.value === productId);
-                              return (
-                                <View key={productId} style={{ width: "50%" }}>
-                                  <View style={styles.selectedStyle}>
-                                    <Text style={styles.textSelectedStyle}>{product?.label}</Text>
+                          {/* Display selected products for this application type */}
+                          {selectedProductData[applicationType.value]?.length > 0 && (
+                            <View style={{ marginTop: 10, display: "flex", width: "100%", justifyContent: "center", flexDirection: "row", flexWrap: "wrap" }}>
+                              {selectedProductData[applicationType.value].map((productId) => {
+                                const product = applicationType.products.find((p) => p.value === productId);
+                                return (
+                                  <View key={productId} style={{ width: "50%" }}>
+                                    <View style={styles.selectedStyle}>
+                                      <Text style={styles.textSelectedStyle}>{product?.label}</Text>
 
-                                    <TouchableOpacity onPress={() => handleRemoveSelectedItem(applicationType.value, productId)}>
-                                      <AntDesign color="red" name="delete" size={17} />
-                                    </TouchableOpacity>
+                                      <TouchableOpacity onPress={() => handleRemoveSelectedItem(applicationType.value, productId)}>
+                                        <AntDesign color="red" name="delete" size={17} />
+                                      </TouchableOpacity>
+                                    </View>
+
                                   </View>
+                                );
+                              })}
+                            </View>
+                          )}
+                        </View>
+                      ))}
+                    </View>
 
-                                </View>
-                              );
-                            })}
-                          </View>
-                        )}
-                      </View>
-                    ))}
-                  </View>
-
-                }
-                {/* 
+                  }
+                  {/* 
 
               <View style={styles.imgcontainer}>
 
@@ -520,53 +550,53 @@ const EditShop: React.FC<editShopprops> = ({ route }) => {
                 ))}
               </View> */}
 
-                <View style={styles.imgcontainer}>
-                  {shopData.image.map((imageUrl, index) => (
-                    <View key={index} style={styles.imageContainer}>
-                      <Image source={{ uri: `${Image_Base_Url}/${imageUrl.image}` }} style={styles.selectedimg} />
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleselectedDeleteImage(imageUrl.id)}
-                      >
-                        <Text style={styles.deleteButtonText}>X</Text>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
+                  <View style={styles.imgcontainer}>
+                    {shopData.image.map((imageUrl, index) => (
+                      <View key={index} style={styles.imageContainer}>
+                        <Image source={{ uri: `${Image_Base_Url}/${imageUrl.image}` }} style={styles.selectedimg} />
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() => handleselectedDeleteImage(imageUrl.id)}
+                        >
+                          <Text style={styles.deleteButtonText}>X</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
 
-                {/* here selectd img view code */}
-                <View style={styles.imgcontainer}>
-                  {selectedImages.map((imageUri, index) => (
-                    <View key={index} style={styles.imageContainer}>
-                      <Image source={{ uri: imageUri }} style={styles.selectedimg} />
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleDeleteImage(index)}
-                      >
-                        <Text style={styles.deleteButtonText}>X</Text>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-                {/* <View style={styles.uploadimgcontainer}>
+                  {/* here selectd img view code */}
+                  <View style={styles.imgcontainer}>
+                    {selectedImages.map((imageUri, index) => (
+                      <View key={index} style={styles.imageContainer}>
+                        <Image source={{ uri: imageUri }} style={styles.selectedimg} />
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() => handleDeleteImage(index)}
+                        >
+                          <Text style={styles.deleteButtonText}>X</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                  {/* <View style={styles.uploadimgcontainer}>
                   <TouchableOpacity onPress={handleshopimages}>
                     <Text style={styles.uploadimgtext}>Add Shop Images</Text>
                   </TouchableOpacity>
 
                 </View> */}
-                <TouchableOpacity onPress={handleshopimages} style={styles.ImageContainer}>
-                  <Text style={{ fontSize: 17, color: "#333" }}>Add Shop Images</Text>
-                  <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
+                  <TouchableOpacity onPress={handleshopimages} style={styles.ImageContainer}>
+                    <Text style={{ fontSize: 17, color: "#333" }}>Add Shop Images</Text>
+                    <Text style={{ fontSize: 23, color: "#00aaf0" }}>+</Text>
+                  </TouchableOpacity>
+
+                </ScrollView>
+                <TouchableOpacity onPress={submit} style={styles.addtext}>
+                  <Text style={styles.addshoptext}>Update Shop</Text>
                 </TouchableOpacity>
+              </>
+            }
 
-              </ScrollView>
-              <TouchableOpacity onPress={submit} style={styles.addtext}>
-                <Text style={styles.addshoptext}>Update Shop</Text>
-              </TouchableOpacity>
-            </>
-          }
-
-        </View>
+          </View>
         </KeyboardAvoidingView>
         <View >
           <CustomMultipleImagemodal

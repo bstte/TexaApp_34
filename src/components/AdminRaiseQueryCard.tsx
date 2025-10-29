@@ -158,18 +158,22 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
             console.log("error:", errer)
         }
     }
+    // console.log("props", props)
     return (
         <>
             <CommonCard>
 
-
+                <Textlabel title="User Name:" value={props?.user?.name} />
                 <Textlabel title="Shop Name:" value={props.shop_name} />
                 <Textlabel title="Country:" value={props.country_name} />
-                <Textlabel title="Ticket:" value={props.case_id} />
-                <Textlabel title="Subject:" value={props.query_title} />
-                <Textlabel title="Description:" value={props.description} />
                 <Textlabel title="Product:" value={props.product_name} />
-                <Textlabel title="Status:" value={props.status} />
+                <Textlabel title="Subject:" value={props.query_title} />
+                <Textlabel title="Query Status:" value={props.status} />
+                <Textlabel title="Ticket Number:" value={props.case_id} />
+
+                {/* <Textlabel title="Description:" value={props.description} /> */}
+
+
                 {
                     role === 1 && user_type === 0 ? (
                         <Dropdown
@@ -211,10 +215,22 @@ const AdminRaiseQueryCard: React.FC<RaiseQuerydprops> = ({ props, index, onDelet
                         <View style={{ flexDirection: "row" }}>
                             <View style={{ position: "relative" }}>
                                 <TouchableOpacity style={{ marginRight: 10, marginTop: 4 }} onPress={() => {
-                                    AdminChat(props.user_id, props.case_id, userData && userData.id, {
-                                        profile_photo_path: `${Image_Base_Url}/images/user/${userData && userData.profile_photo_path}`,
-                                        name: userData ? userData.name + (userData.lname ? userData.lname : '') : ''
-                                    })
+                                    AdminChat(
+                                        props.user_id,
+                                        props.case_id,
+                                        userData && userData.id,
+                                        {
+                                            profile_photo_path:
+                                                props.user?.profile_photo_path
+                                                    ? `${Image_Base_Url}/images/user/${props.user.profile_photo_path}`
+                                                    : '',
+
+                                            name: props.user
+                                                ? `${props.user.name}${props.user.lname ? ' ' + props.user.lname : ''}`
+                                                : ''
+                                        }
+                                    );
+
                                 }}>
                                     <Text><Entypo name="chat" size={responsiveHeight(3.5)} color="green" /></Text>
                                 </TouchableOpacity>

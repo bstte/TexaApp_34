@@ -94,13 +94,21 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
     if (Shopname === '') {
      
       ErrorMessage({
-        message: "The shop name field is required"
+        message: "Shop name is required"
       })
 
       return false
     }
 
-    if (Shopname) {
+    if (Contactperson === '') {
+     
+      ErrorMessage({
+        message: "Contact person name is required"
+      })
+
+      return false
+    }
+
       if (Email === '') {
        
         ErrorMessage({
@@ -116,12 +124,20 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
         return false
      
       }
-    }
+
+      if (Contacnumber === '') {
+     
+        ErrorMessage({
+          message: "Contact person number is required"
+        })
+  
+        return false
+      }
 
     if (Object.keys(selectedProductData).length === 0) {
      
       ErrorMessage({
-        message: "The application type field is required"
+        message: "application type is required"
       })
 
       return false
@@ -166,7 +182,7 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
 
     try {
       setIsLoading(true)
-      console.log("here above shop")
+     
       const token = await AsyncStorage.getItem('token');
       if (token) {
         const response = await api.add_Shop(formData, token)
@@ -297,10 +313,10 @@ const AddShop: React.FC<AddShopProps> = ({ route, navigation }) => {
             <View >
               <CustomTextInput title='Shop Name' value={Shopname} placeholder='Shop Name' onChangeText={(Shopname) => setShopname(Shopname)} required={true}/>
 
-              <CustomTextInput title='Contact Person Name' value={Contactperson} placeholder='Contact Person Name' onChangeText={(Contactperson) => setContactperson(Contactperson)} />
-              <CustomTextInput title='Shop Email' value={Email} placeholder='Shop Email' onChangeText={(email) => setEmail(email)} />
+              <CustomTextInput title='Contact Person Name' value={Contactperson} placeholder='Contact Person Name' onChangeText={(Contactperson) => setContactperson(Contactperson)} required={true}/>
+              <CustomTextInput title='Shop Email' value={Email} placeholder='Shop Email' onChangeText={(email) => setEmail(email)} required={true}/>
               <View style={styles.numbercontainer}>
-                <Text style={styles.textinputlabel}>Contact Person Number</Text>
+                <Text style={styles.textinputlabel}>Contact Person Number <Text style={{color:"red"}}>*</Text></Text>
 
                 <View style={{ width: "100%", }}>
 

@@ -61,7 +61,7 @@ const Authuser: React.FC<authuser> = ({ navigation }) => {
     } = data;
 
     if (sender_id?.toLowerCase().startsWith('admin')) {
-      // console.log("➡️ Navigating to AdminChat (user side)");
+      console.log("➡️ Navigating to AdminChat (user side)");
       NavigationService.navigate('AdminChat', {
         user_id,
         case_id,
@@ -72,8 +72,8 @@ const Authuser: React.FC<authuser> = ({ navigation }) => {
         },
       });
     } else {
-    //   console.log("➡️ Navigating to AdminChatPage (admin side)", data 
-    //  );
+      console.log("➡️ Navigating to AdminChatPage (admin side)", data 
+     );
       NavigationService.navigate('AdminChatPage', {
         user_id:sender_id,
         case_id,

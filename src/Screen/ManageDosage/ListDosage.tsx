@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TouchableOpacity, Image, TextInput, FlatList, RefreshControl } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import api from '../../api/Api';
 import styles from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     responsiveHeight,
 } from "react-native-responsive-dimensions";
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { Image_Base_Url } from '../../api/Api';
 import CommonCard from '../../components/Common/CommonCard';
 import { setDosageItems } from '../../Reducer/slices/dosageItemsSlice';
@@ -40,13 +40,18 @@ const ListDosage: React.FC<dosageprops> = (props) => {
 
     useEffect(() => {
         get_dosage();
-        get_dosage_items()
+        // get_dosage_items()
     }, [checkEquipmentpData])
 
     const route = useRoute();
 
 
-
+    useFocusEffect(
+        useCallback(() => {
+          get_dosage_items();
+        }, [])
+      );
+    
     useEffect(() => {
         if (route.params && route.params.updatedDosageData ===true) {
             get_dosage()
@@ -56,14 +61,10 @@ const ListDosage: React.FC<dosageprops> = (props) => {
     const get_dosage_items=async()=>{
         const token = await AsyncStorage.getItem('token');
         if(token){
-            setIsLoading(true)
             try{
                 const response=await api.dosage_items(token)
                 if(response.data.success===true){
-                    // console.log("dosage item response",response.data)
                     dispatch(setDosageItems(response.data.data))
-                    setIsLoading(false)
-
                 }
                 
 

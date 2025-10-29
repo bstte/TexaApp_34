@@ -92,11 +92,23 @@ const ViewQuery = ({ route }) => {
 
   const handleSubmitReplyForm = async () => {
     setIReplysLoading(true)
-    if (defaultquerytitle === '' || querydes === '' || ReplyImage === null) {
-      ErrorMessage({ message: "All filed are required" });
+    if (defaultquerytitle ==="") {
+      ErrorMessage({ message: "Subject is required" });
       setIReplysLoading(false)
       return false
     }
+
+    if (querydes ==="") {
+      ErrorMessage({ message: "Message is required" });
+      setIReplysLoading(false)
+      return false
+    }
+    // if (defaultquerytitle === '' || querydes === '' || ReplyImage === null) {
+    //   ErrorMessage({ message: "All filed are required" });
+    //   setIReplysLoading(false)
+    //   return false
+    // }
+
     const ReplyData = new FormData();
     ReplyData.append('shop_id', shop_id);
     ReplyData.append('user_id', user_id);
@@ -171,10 +183,10 @@ const ViewQuery = ({ route }) => {
               {viewQueryData.data.map((item) => (
                 <View key={item.id}>
                   <CommonCard>
-                    <Text style={styles.viewlabel}>{item.send_by === 1 ? item.shop : "Reply From Texa"}</Text>
+                    <Text style={styles.viewlabel}>{item.send_by === 1 ? item.shop : "Reply From Texap"}</Text>
                     <Textlabel title="Query Status:" value={item.status ? item.status : "Open"} />
-                    <Textlabel title="Query Title:" value={item.query_title} />
-                    {/* <Textlabel title="Message:" value={item.description} /> */}
+                    <Textlabel title="Subject:" value={item.query_title} />
+                    <Textlabel title="Message:" value={item.description} />
                     <Textlabel title="Product:" value={item.product_name} />
                     <Textlabel title="Submited At:" value={item.created_at} />
                     <View style={styles.imgcontainer}>

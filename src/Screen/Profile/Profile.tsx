@@ -25,6 +25,8 @@ const Profile = (props) => {
     const country_flag = userData && userData.country && userData.country.flag ? userData.country.flag : '';
     const country_label = userData && userData.country && userData.country.name ? userData.country.name : '';
     const [editedName, setEditedName] = useState(userData ? userData.name : '');
+    const [editedlName, setEditedlName] = useState(userData ? userData.lname : '');
+
     const [isLoading, setIsLoading] = React.useState(false);
     const [isCountryDropdownVisible, setCountryDropdownVisible] = React.useState(false)
     const [isCountryCallingCodeDropdownVisible, setCountryCallingCodeDropdownVisible] = React.useState(false)
@@ -33,7 +35,6 @@ const Profile = (props) => {
     const [editprofileimg, seteditprofileimg] = React.useState('');
     const [phone, setphone] = useState(userData ? (userData.phone ? userData.phone.toString() : '') : '');
     const role = userData && userData.role;
-// console.log("user ",userData)
     const [successmsg, setsuccessmsg] = React.useState<string>('');
     const [selectedItem, setSelectedItem] = React.useState(null);
     const [selectedCallingCode, setselectedCallingCode] = React.useState(null);
@@ -58,6 +59,7 @@ const Profile = (props) => {
         }
         const updateprofile = new FormData;
         updateprofile.append('name', editedName)
+        updateprofile.append('lname', editedlName)
         updateprofile.append('phone', phone)
         updateprofile.append('role', role)
 
@@ -77,7 +79,7 @@ const Profile = (props) => {
         const userId = userData ? userData.id : 0;
 
 
-       
+
         const token = await AsyncStorage.getItem('token');
         if (userId && token) {
 
@@ -85,9 +87,9 @@ const Profile = (props) => {
                 setIsLoading(true)
                 const response = await api.user_update(userId, token, updateprofile);
                 setIsLoading(false);
-                console.log("update profile",response.data)
+                console.log("update profile", response.data)
                 if (response.data.success === true) {
-                    
+
                     SuccessMessage({
                         message: response.data.message
                     })
@@ -109,7 +111,7 @@ const Profile = (props) => {
             }
         }
     };
-   
+
 
     const handleCountrySelect = (item: any) => {
         setSelectedItem(item)
@@ -129,7 +131,7 @@ const Profile = (props) => {
             <SafeAreaView style={styles.container}>
 
                 <CustomHeader title="Complete Your Profile" imgSource={require('../../assets/img/default_profile.jpg')} />
-               
+
                 <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
 
                     <View style={styles.maincontainer}>
@@ -172,7 +174,18 @@ const Profile = (props) => {
                                     autoCorrect={false}
                                     onChangeText={(text) => setEditedName(text)} // Update editedName as the user types
                                 />
-                                {/* <TextInput style={styles.Textinput} placeholder="Enter Your Name" autoCapitalize='none' value={userData ? userData.name : ""} autoCorrect={false} /> */}
+                                {role === 1 && (
+                                    <TextInput
+                                        style={styles.Textinput}
+                                        placeholderTextColor={"#787a7c"}
+                                        placeholder="Enter Your last name"
+                                        autoCapitalize="none"
+                                        value={editedlName}
+                                        autoCorrect={false}
+                                        onChangeText={setEditedlName}
+                                    />
+                                )}
+
                                 <TextInput style={styles.Textinput} placeholder="Enter Your email" autoCapitalize='none' value={userData ? userData.email : ""} autoCorrect={false} editable={false} placeholderTextColor={"#787a7c"} />
 
 

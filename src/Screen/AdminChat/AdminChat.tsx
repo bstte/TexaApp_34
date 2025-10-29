@@ -37,7 +37,7 @@ const AdminChat = ({ route, props }) => {
     GetChat()
 
   }, [case_id])
-
+console.log("item",item)
   const GetChat = async () => {
     const token = await AsyncStorage.getItem('token');
     const limit = 100;
@@ -200,7 +200,7 @@ const AdminChat = ({ route, props }) => {
               </TouchableOpacity>
 
               <View style={{ flexDirection: 'column' }}>
-                <Text style={styles.username}>{item.name}</Text>
+              <Text style={styles.username}>{item?.name} {item?.lname}</Text>
                 <Text style={styles.onlineStatus}>Online</Text>
               </View>
             </View>

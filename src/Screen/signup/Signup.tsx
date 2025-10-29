@@ -180,7 +180,7 @@ const Signup: React.FC<signup> = (props) => {
 
 
   const navigatelogin = () => {
-    props.navigation.navigate('Login');
+    props.navigation.replace('Login');
   }
 
 
@@ -224,7 +224,7 @@ const Signup: React.FC<signup> = (props) => {
 
         <ScrollView keyboardShouldPersistTaps="handled">
           <View style={{ alignItems: "center" }}>
-            <Text style={style.title}>T E X A</Text>
+            <Text style={style.title}>T E X A P</Text>
             <Text style={style.title2}> Create an account</Text>
           </View>
 

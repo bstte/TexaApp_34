@@ -77,7 +77,7 @@ const Login: React.FC<loginprops> = (props) => {
   }
   const dispatch = useDispatch();
   const navigatesignup = () => {
-    props.navigation.navigate("Signup");
+    props.navigation.replace("Signup");
   }
 
   // here email validatioin code
@@ -184,15 +184,16 @@ const Login: React.FC<loginprops> = (props) => {
 
       // here check login credential
       const response = await api.login(credentials);
-
+      // console.log(response.data)
       if (response.data.success === true) {
 
         // dispatch(setUser(response.data.data.user))
         const token = response.data.data.token;
         const userresponse = await api.get_user(token)
+        
         if (userresponse.data.status === "success") {
           SuccessMessage({
-            message: 'Login successful'
+            message: response.data?.message
           })
           dispatch(setUser(userresponse.data.user))
           setIsLoading(false)

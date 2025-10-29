@@ -121,7 +121,7 @@ const ChangePassword: React.FC<props> = ({ route, navigation }) => {
 
         {/* <Image source={require('../../assets/img/food.jpeg')} style={style.loginimg}/> */}
         <View style={{ alignItems: "center" }}>
-          <Text style={styles.title}>T E X A</Text>
+          <Text style={styles.title}>T E X A P</Text>
           <Text style={styles.title2}>CHANGE PASSWORD</Text>
           {successmsg ? <Text style={styles.successmsg}>Password Update Successfull Please Login Again</Text> : ''}
         </View>

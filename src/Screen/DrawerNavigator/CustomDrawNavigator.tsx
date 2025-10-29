@@ -62,7 +62,7 @@ const CustomDrawNavigator: React.FC<customeprops> = (props) => {
                 if (response.data.success === true) {
                   setIsLoading(false)
                   SuccessMessage({
-                    message: "Logout Successfully"
+                    message: response.data?.message
                   })
                   await AsyncStorage.removeItem('token');
                   const resetAction = CommonActions.reset({
