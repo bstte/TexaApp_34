@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Image, Keyboard, Modal, Platform, ProgressBarAndroid, ScrollView, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
+import { Alert, FlatList, Image, Keyboard, Modal, PermissionsAndroid, Platform, ProgressBarAndroid, ScrollView, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { TextInput, TouchableOpacity, View } from "react-native";
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
-import ImagePicker from 'react-native-image-crop-picker';
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
 import ImageResizer from "react-native-image-resizer";
 import Video from 'react-native-video';
@@ -47,59 +47,84 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
         setSelectedVideos([])
         setSelectedDocuments([])
     };
-    const compressAndResizeImage = async (imagePath) => {
-        const compressedImage = await ImageResizer.createResizedImage(
+    const compressAndResizeImage = async (imagePath: string) => {
+        try {
+          const compressedImage = await ImageResizer.createResizedImage(
             imagePath,
-            200, // Set your desired maximum width
-            200, // Set your desired maximum height
-            'JPEG', // Image format
-            50, // Image quality (adjust as needed)
-            0 // Image rotation (0, 90, 180, or 270)
-        );
-
-        return compressedImage;
-    };
-    const takeImage = async () => {
+            800,
+            800,
+            "JPEG",
+            70,
+            0
+          );
+          return compressedImage;
+        } catch (error) {
+          console.error("Compression error:", error);
+          Alert.alert("Error", "Image compression failed.");
+          return { uri: imagePath };
+        }
+      };
+    
+      // 📷 Open Camera
+      const takeImage = async () => {
         try {
-            const image = await ImagePicker.openCamera({ width: 300, height: 300 });
-            const compressedImage = await compressAndResizeImage(image.path);
+          if (Platform.OS === "android") {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.CAMERA
+            );
+            if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+              Alert.alert("Permission Denied", "Camera permission is required.");
+              return;
+            }
+          }
+    
+          const result = await launchCamera({
+            mediaType: "photo",
+            quality: 0.8,
+          });
+    
+          if (!result.didCancel && result.assets?.length > 0) {
+            const uri = result.assets[0].uri!;
+            const compressed = await compressAndResizeImage(uri);
             setdocModalVisible(false)
-            setSelectedImages([compressedImage.uri])
-            // setSelectedImages([image.path]); // Set the selected image path
+            setSelectedImages([compressed.uri]);
+          }
         } catch (error) {
-            console.log("Error capturing image:", error);
+          console.log("Camera Error:", error);
         }
-    };
-
-
-    const selectedImage = async () => {
-        let imageList: string[] = [];
-        let videoList: string[] = [];
+      };
+    
+      // 🖼️ Pick from Gallery
+      const selectedImage = async () => {
         try {
-            const media = await ImagePicker.openPicker({
-                multiple: true,
-                waitAnimationEnd: false,
-                includeExif: true,
-                compressImageQuality: 0.8,
-                maxFiles: 10,
-                mediaType: 'any', // Allow both images and videos
-            });
-
-            media.forEach(item => {
-                if (item.path.endsWith('.mp4')) {
-                    videoList.push(item.path);
-                } else {
-                    imageList.push(item.path);
-                }
-            });
-            handledoc()
-            setSelectedImages(imageList);
-            setSelectedVideos(videoList);
+          const result = await launchImageLibrary({
+            mediaType: "mixed",
+            selectionLimit: 10,
+            quality: 0.8,
+          });
+    
+          if (result.didCancel || !result.assets) return;
+    
+          const imageList: string[] = [];
+          const videoList: string[] = [];
+    
+          for (const item of result.assets) {
+            if (item.type?.startsWith("video/")) {
+              videoList.push(item.uri!);
+            } else {
+              const compressed = await compressAndResizeImage(item.uri!);
+              imageList.push(compressed.uri);
+            }
+          }
+    
+          handledoc();
+          setSelectedImages(imageList);
+          setSelectedVideos(videoList);
         } catch (error) {
-            console.error('Gallery Error:', error);
+          console.error("Gallery Error:", error);
         }
-    };
-
+      };
+    
 
 
 

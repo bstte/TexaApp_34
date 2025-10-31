@@ -6,15 +6,12 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
-import ImagePicker from 'react-native-image-crop-picker';
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Message from "./Message.tsx";
 import ImageResizer from "react-native-image-resizer";
 import Video from 'react-native-video';
 import DocumentPicker from "react-native-document-picker";
 import FileViewer from 'react-native-file-viewer';
-// import { ErrorMessage } from "./CustomTostMessage";
-import RNFetchBlob from 'rn-fetch-blob';
-// import CustomMultipleImagemodal from "./CustomMultipleImagemodal";
 
 
 interface MessagesList {
@@ -45,59 +42,72 @@ const MessagesList: React.FC<MessagesList> = ({ messages, onSendMessage, userId,
         setSelectedVideos([])
         setSelectedDocuments([])
     };
-    const compressAndResizeImage = async (imagePath) => {
-        const compressedImage = await ImageResizer.createResizedImage(
-            imagePath,
-            200, // Set your desired maximum width
-            200, // Set your desired maximum height
-            'JPEG', // Image format
-            50, // Image quality (adjust as needed)
-            0 // Image rotation (0, 90, 180, or 270)
-        );
-
-        return compressedImage;
-    };
-    const takeImage = async () => {
+    const compressAndResizeImage = async (imagePath: string) => {
         try {
-            const image = await ImagePicker.openCamera({ width: 300, height: 300 });
-            const compressedImage = await compressAndResizeImage(image.path);
-            setdocModalVisible(false)
-            setSelectedImages([compressedImage.uri])
-            // setSelectedImages([image.path]); // Set the selected image path
+            const compressedImage = await ImageResizer.createResizedImage(
+                imagePath,
+                800,
+                800,
+                "JPEG",
+                70,
+                0
+            );
+            return compressedImage;
         } catch (error) {
-            console.log("Error capturing image:", error);
+            console.error("Compression error:", error);
+            return { uri: imagePath };
         }
     };
 
-
-    const selectedImage = async () => {
-        let imageList: string[] = [];
-        let videoList: string[] = [];
+    // 📷 Open Camera
+    const takeImage = async () => {
         try {
-            const media = await ImagePicker.openPicker({
-                multiple: true,
-                waitAnimationEnd: false,
-                includeExif: true,
-                compressImageQuality: 0.8,
-                maxFiles: 10,
-                mediaType: 'any', // Allow both images and videos
+            const result = await launchCamera({
+                mediaType: "photo",
+                quality: 0.8,
             });
 
-            media.forEach(item => {
-                if (item.path.endsWith('.mp4')) {
-                    videoList.push(item.path);
-                } else {
-                    imageList.push(item.path);
-                }
+            if (result.didCancel || !result.assets?.length) return;
+
+            const uri = result.assets[0].uri!;
+            const compressed = await compressAndResizeImage(uri);
+            handledoc();
+            setSelectedImages([compressed.uri]);
+        } catch (error) {
+            console.error("Camera Error:", error);
+        }
+    };
+
+    // 🖼️ Select Images/Videos from Gallery
+    const selectedImage = async () => {
+        try {
+            const result = await launchImageLibrary({
+                mediaType: "mixed",
+                selectionLimit: 10,
+                quality: 0.8,
             });
-            handledoc()
+
+            if (result.didCancel || !result.assets?.length) return;
+
+            const imageList: string[] = [];
+            const videoList: string[] = [];
+
+            for (const item of result.assets) {
+                if (item.type?.startsWith("video/")) {
+                    videoList.push(item.uri!);
+                } else {
+                    const compressed = await compressAndResizeImage(item.uri!);
+                    imageList.push(compressed.uri);
+                }
+            }
+
+            handledoc();
             setSelectedImages(imageList);
             setSelectedVideos(videoList);
         } catch (error) {
-            console.error('Gallery Error:', error);
+            console.error("Gallery Error:", error);
         }
     };
-
 
 
 

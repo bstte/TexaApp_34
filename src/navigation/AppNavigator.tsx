@@ -27,7 +27,7 @@ import Profile from '../Screen/Profile/Profile';
 import AdminChatList from '../Screen/AdminChat/AdminChatList';
 import AdminChat from '../Screen/AdminChat/AdminChat';
 import AdminChatPage from '../components/AdminChat/AdminChatPage';
-import VideoCall from '../Screen/VideoCall/VideoCall';
+// import VideoCall from '../Screen/VideoCall/VideoCall';
 import ChatBotScreen from '../Screen/Chatbot/ChatBotScreen';
 import NavigationService from './NavigationService';
 
@@ -63,7 +63,7 @@ const AppNavigator = () => {
 
             <Stack.Screen name='AdminChat' component={AdminChat}/>
             <Stack.Screen name='AdminChatPage' component={AdminChatPage}/>
-            <Stack.Screen name='VideoCall' component={VideoCall}/>
+            {/* <Stack.Screen name='VideoCall' component={VideoCall}/> */}
       </Stack.Navigator>
     </NavigationContainer>
       );

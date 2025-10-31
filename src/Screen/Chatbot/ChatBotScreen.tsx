@@ -7,10 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-  KeyboardAvoidingView,
   Platform,
   Keyboard,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import CustomHeader from '../CustomHeader/CustomHeader';
 import { launchImageLibrary } from 'react-native-image-picker';

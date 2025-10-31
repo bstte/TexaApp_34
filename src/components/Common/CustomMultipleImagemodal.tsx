@@ -1,57 +1,77 @@
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Platform, PermissionsAndroid, PermissionStatus } from 'react-native'
-import React from 'react'
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  Platform,
+  PermissionsAndroid,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { responsiveHeight, responsiveWidth, responsiveFontSize } from "react-native-responsive-dimensions";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 import ImageResizer from 'react-native-image-resizer';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker';
-import { TouchableWithoutFeedback } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { themeFamily } from '../../theme';
+
+// Android Photo Picker (for Android 13+)
+import { NativeModules } from 'react-native';
+const { RNPhotoPickerModule } = NativeModules || {};
+
 interface ImageModal {
-  togglevisible: any;
-  handelMultipleImage: any;
-  onclose: any;
+  togglevisible: boolean;
+  handelMultipleImage: (images: string[] | string) => void;
+  onclose: (val: boolean) => void;
 }
 
-const CustomMultipleImagemodal: React.FC<ImageModal> = ({ togglevisible, onclose, handelMultipleImage }) => {
-
+const CustomMultipleImagemodal: React.FC<ImageModal> = ({
+  togglevisible,
+  onclose,
+  handelMultipleImage,
+}) => {
   const toggleModal = () => {
     onclose(false);
   };
-  const compressAndResizeImage = async (imagePath) => {
+
+  const compressAndResizeImage = async (imagePath: string) => {
     const compressedImage = await ImageResizer.createResizedImage(
       imagePath,
-      800, // Set your desired maximum width
-      800, // Set your desired maximum height
-      'JPEG', // Image format
-      100, // Image quality (adjust as needed)
-      0 // Image rotation (0, 90, 180, or 270)
+      800,
+      800,
+      'JPEG',
+      90,
+      0
     );
-
     return compressedImage;
   };
 
   const selectImageFromCamera = async () => {
     try {
-
-      const cameraPermission = Platform.OS === 'android' ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
+      const cameraPermission =
+        Platform.OS === 'android'
+          ? PERMISSIONS.ANDROID.CAMERA
+          : PERMISSIONS.IOS.CAMERA;
 
       const permissionResult = await request(cameraPermission);
 
       if (permissionResult === RESULTS.GRANTED) {
-        console.log('Camera permission granted');
-
-        const response = await ImagePicker.openCamera({
-          multiple: false, // Set multiple to false to select only one image
+        const result = await launchCamera({
+          mediaType: 'photo',
+          quality: 0.8,
         });
 
-        console.log('Image picker response:', response);
-        if (response) {
-
-          const compressedImage = await compressAndResizeImage(response.path);
-          handelMultipleImage(compressedImage.uri)
+        if (result?.assets && result.assets.length > 0) {
+          const compressedImage = await compressAndResizeImage(
+            result.assets[0].uri || ''
+          );
+          handelMultipleImage(compressedImage.uri);
         }
-
       } else {
         console.log('Camera permission denied');
       }
@@ -60,77 +80,93 @@ const CustomMultipleImagemodal: React.FC<ImageModal> = ({ togglevisible, onclose
     }
   };
 
-
-
   const selectImageFromGallery = async () => {
-    let imagelist: string[] = [];
-
-
-    // const hasGalleryPermission = await requestGalleryPermission();
-    // if (hasGalleryPermission) {
     try {
-      const response = await ImagePicker.openPicker({
-        multiple: true,
-        waitAnimationEnd: false,
-        includeExif: true,
-        compressImageQuality: 0.8,
-        maxFiles: 10,
-        mediaType: 'photo',
-      });
-      if (response && response.length > 0) {
-        await Promise.all(response.map(async (image) => {
-          const compressedImage = await compressAndResizeImage(image.path);
-          imagelist.push(compressedImage.uri);
-        }));
+      // Android 13+ → use system photo picker
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        if (RNPhotoPickerModule && RNPhotoPickerModule.pickImages) {
+          const uris = await RNPhotoPickerModule.pickImages(); // returns array of URIs
+          handelMultipleImage(uris);
+          return;
+        }
       }
-      //   setSelectedImages((prevImages) => [...prevImages, ...imagelist]);
-      handelMultipleImage(imagelist)
 
+      // iOS or older Android → fallback to react-native-image-picker
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        selectionLimit: 10,
+        quality: 0.8,
+      });
+
+      if (result?.assets && result.assets.length > 0) {
+        const imageUris: string[] = [];
+        for (const item of result.assets) {
+          if (item.uri) {
+            const compressedImage = await compressAndResizeImage(item.uri);
+            imageUris.push(compressedImage.uri);
+          }
+        }
+        handelMultipleImage(imageUris);
+      }
     } catch (error) {
       console.error('Gallery Error:', error);
     }
-    // }else{
-    //   console.log('Gallery permission not granted. Unable to pick images.');
-    // }
-
   };
-
 
   return (
     <View style={styles.container}>
-      <Modal
-        visible={togglevisible}
-        animationType="slide"
-        transparent={true}
-
-      >
+      <Modal visible={togglevisible} animationType="slide" transparent>
         <TouchableWithoutFeedback onPress={toggleModal}>
           <View style={styles.modalContainer}>
             <View style={styles.modal}>
               <View style={styles.separator} />
 
-              <TouchableOpacity onPress={selectImageFromCamera} style={styles.cameraContainer}>
-                <Icon color="#00aaf0" name='camera' size={33} style={{ width: 40 }} />
+              <TouchableOpacity
+                onPress={selectImageFromCamera}
+                style={styles.cameraContainer}
+              >
+                <Icon
+                  color="#00aaf0"
+                  name="camera"
+                  size={33}
+                  style={{ width: 40 }}
+                />
                 <Text style={styles.text}>Take Photo</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={selectImageFromGallery} style={styles.GalleryContainer}>
-                <Icon color="#00aaf0" name='image' size={33} style={{ width: 40 }} />
+              <TouchableOpacity
+                onPress={selectImageFromGallery}
+                style={styles.GalleryContainer}
+              >
+                <Icon
+                  color="#00aaf0"
+                  name="image"
+                  size={33}
+                  style={{ width: 40 }}
+                />
                 <Text style={styles.text}>Select From Gallery</Text>
               </TouchableOpacity>
+
               <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                <Text style={{ color: "#00aaf0", fontSize: responsiveFontSize(2), fontFamily: themeFamily.fontFamily }}>Close</Text>
+                <Text
+                  style={{
+                    color: '#00aaf0',
+                    fontSize: responsiveFontSize(2),
+                    fontFamily: themeFamily.fontFamily,
+                  }}
+                >
+                  Close
+                </Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </TouchableWithoutFeedback>
       </Modal>
     </View>
-  )
-}
+  );
+};
 
-export default CustomMultipleImagemodal
+export default CustomMultipleImagemodal;
 
 const styles = StyleSheet.create({
   container: {
@@ -139,8 +175,8 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: "center",
-    justifyContent: "flex-end",
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   modal: {
     width: responsiveWidth(100),
@@ -157,25 +193,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     backgroundColor: '#ccc',
-
     marginTop: 10,
     marginBottom: 20,
   },
   cameraContainer: {
-    flexDirection: "row", alignItems: "center", marginBottom: 14
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
   },
   GalleryContainer: {
-    flexDirection: "row", alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   text: {
-    fontSize: 18, color: "#000", fontFamily: themeFamily.fontFamily
+    fontSize: 18,
+    color: '#000',
+    fontFamily: themeFamily.fontFamily,
   },
   closeButton: {
     marginTop: responsiveHeight(3.2),
     padding: responsiveHeight(1.3),
     borderWidth: 1,
     borderRadius: responsiveHeight(0.5),
-    alignItems: "center",
+    alignItems: 'center',
     borderColor: '#ccc',
   },
-})
+});

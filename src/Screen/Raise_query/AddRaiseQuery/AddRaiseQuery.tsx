@@ -3,19 +3,11 @@ import { View, TextInput, StatusBar, TouchableOpacity, Text, ScrollView, Image, 
 import styles from '../styles';
 import CustomHeader from '../../CustomHeader/CustomHeader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios, { AxiosError } from 'axios';
 import api from '../../../api/Api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomDropdown from '../../../components/CustomDropdown';
 import { MultiSelect } from 'react-native-element-dropdown';
-import ImagePicker from 'react-native-image-crop-picker';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import ImageResizer from 'react-native-image-resizer';
 import Popup from '../../../components/Popup';
-import {
-  responsiveHeight,
-} from "react-native-responsive-dimensions";
 import { useSelector } from 'react-redux';
 import CustomImageModal from '../../../components/CustomImageModal';
 import CustomTextInput from '../../../components/CustomTextInput';

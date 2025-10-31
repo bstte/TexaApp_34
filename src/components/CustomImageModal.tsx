@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, Platform, PermissionsA
 import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { responsiveHeight, responsiveWidth, responsiveFontSize } from "react-native-responsive-dimensions";
-import ImageResizer from 'react-native-image-resizer';
+
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+
 import { themeFamily } from '../theme';
 import { TouchableWithoutFeedback } from 'react-native';
 interface ImageModal {
@@ -14,65 +15,57 @@ interface ImageModal {
 }
 
 
-const CustomImageModal: React.FC<ImageModal> = ({ togglevisible,onclose, handelImage }) => {
+const CustomImageModal: React.FC<ImageModal> = ({ togglevisible, onclose, handelImage }) => {
 
     const toggleModal = () => {
         onclose(false);
-      };
+    };
 
     // here img picker code
     const Camera = async () => {
         try {
-            const cameraPermission = Platform.OS === 'android' ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
+            // Ask permission only for Android camera
+            if (Platform.OS === 'android') {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.CAMERA,
+                );
+                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log('Camera permission denied');
+                    return;
+                }
+            }
 
-            const permissionResult = await request(cameraPermission);
+            const result = await launchCamera({
+                mediaType: 'photo',
+                quality: 0.8,
+                saveToPhotos: false,
+            });
 
-            if (permissionResult === RESULTS.GRANTED) {
-                
-
-                const response = await ImagePicker.openCamera({
-                    compressImageQuality: 0.8,
-                    compressImageMaxWidth: 1000,
-                    compressImageMaxHeight: 1000,
-                });
-
-                // console.log('Image picker response:', response);
-                // const compressedImage = await compressAndResizeImage(response.path);
-                handelImage(response.path)
-
-            } else {
-                console.log('Camera permission denied');
+            if (!result.didCancel && result.assets?.length > 0) {
+                const uri = result.assets[0].uri;
+                handelImage(uri);
             }
         } catch (error) {
             console.error('Camera Error:', error);
         }
     };
 
-
+    // ---- GALLERY ----
     const Gallery = async () => {
-      try {
-        const galleryPermission = Platform.OS === 'android' ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE : PERMISSIONS.IOS.PHOTO_LIBRARY;
-    
-        const permissionResult = await request(galleryPermission);
-    
-        // if (permissionResult === RESULTS.GRANTED) {
-          console.log('Gallery permission granted');
-          
-          const response = await ImagePicker.openPicker({
-            // multiple: multipleImage,
-            compressImageQuality: 0.8,   // 0 to 1 (70% quality)
-            compressImageMaxWidth: 1000, // max width (px)
-            compressImageMaxHeight: 1000, // max height (px)
-            cropping: false, // true karoge to crop UI khulega
-          });
-    
-          handelImage(response.path);
-        // } else {
-        //   console.log('Gallery permission denied');
-        // }
-      } catch (error) {
-        console.error('Gallery Permission Error:', error);
-      }
+        try {
+            const result = await launchImageLibrary({
+                mediaType: 'photo',
+                selectionLimit: 1,
+                quality: 0.8,
+            });
+
+            if (!result.didCancel && result.assets?.length > 0) {
+                const uri = result.assets[0].uri;
+                handelImage(uri);
+            }
+        } catch (error) {
+            console.error('Gallery Error:', error);
+        }
     };
 
 
@@ -85,28 +78,28 @@ const CustomImageModal: React.FC<ImageModal> = ({ togglevisible,onclose, handelI
 
             >
                 <TouchableWithoutFeedback onPress={toggleModal}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modal}>
-                        <View style={{alignItems:"center"}}>
-                        <View style={styles.separator} />
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modal}>
+                            <View style={{ alignItems: "center" }}>
+                                <View style={styles.separator} />
+                            </View>
+
+
+                            <TouchableOpacity onPress={Camera} style={styles.cameraContainer}>
+                                <Icon color="blue" name='camera' size={33} style={{ width: 40 }} />
+                                <Text style={styles.text}>Take Photo</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity onPress={Gallery} style={styles.GalleryContainer}>
+                                <Icon color="blue" name='image' size={33} style={{ width: 40 }} />
+                                <Text style={styles.text}>Select From Gallery</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+                                <Text style={{ color: "blue", fontSize: responsiveFontSize(2.5) }}>Close</Text>
+                            </TouchableOpacity>
                         </View>
-                 
 
-                        <TouchableOpacity onPress={Camera} style={styles.cameraContainer}>
-                            <Icon color="blue" name='camera' size={33} style={{ width: 40 }} />
-                            <Text style={styles.text}>Take Photo</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={Gallery} style={styles.GalleryContainer}>
-                            <Icon color="blue" name='image' size={33} style={{ width: 40 }} />
-                            <Text style={styles.text}>Select From Gallery</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-                <Text style={{ color: "blue", fontSize: responsiveFontSize(2.5) }}>Close</Text>
-              </TouchableOpacity>
                     </View>
-                   
-                </View>
                 </TouchableWithoutFeedback>
             </Modal>
         </View>

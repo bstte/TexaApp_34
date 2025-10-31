@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet,TouchableOpacity,Platform } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Platform, PermissionsAndroid } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React from 'react'
 import {
@@ -8,103 +8,105 @@ import {
 } from "react-native-responsive-dimensions";
 import ImageResizer from 'react-native-image-resizer';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-interface ImagePicker{
-    title:string
-    handelImage:(text:string)=>void
-   
+interface ImagePicker {
+    title: string
+    handelImage: (text: string) => void
+
 }
-const CustomImagePicker:React.FC<ImagePicker>= ({handelImage,title}) => {
+const CustomImagePicker: React.FC<ImagePicker> = ({ handelImage, title }) => {
 
-    const compressAndResizeImage = async (imagePath) => {
+    const compressAndResizeImage = async (imagePath: string) => {
         const compressedImage = await ImageResizer.createResizedImage(
             imagePath,
-            200, // Set your desired maximum width
-            200, // Set your desired maximum height
-            'JPEG', // Image format
-            50, // Image quality (adjust as needed)
-            0 // Image rotation (0, 90, 180, or 270)
+            200, // max width
+            200, // max height
+            'JPEG', // format
+            70, // quality %
+            0, // rotation
         );
-
         return compressedImage;
     };
 
-    // here img picker code
+    // 📷 CAMERA
     const Camera = async () => {
         try {
-            const cameraPermission = Platform.OS === 'android' ? PERMISSIONS.ANDROID.CAMERA : PERMISSIONS.IOS.CAMERA;
+            if (Platform.OS === 'android') {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.CAMERA,
+                );
+                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log('Camera permission denied');
+                    return;
+                }
+            }
 
-            const permissionResult = await request(cameraPermission);
+            const result = await launchCamera({
+                mediaType: 'photo',
+                quality: 0.8,
+                saveToPhotos: false,
+            });
 
-            if (permissionResult === RESULTS.GRANTED) {
-                console.log('Camera permission granted');
-
-                const response = await ImagePicker.openCamera({
-                    width: 300,
-                    height: 400,
-                    cropping: true,
-                });
-
-                console.log('Image picker response:', response);
-                const compressedImage = await compressAndResizeImage(response.path);
-                handelImage(compressedImage.uri)
-          
-
-            } else {
-                console.log('Camera permission denied');
+            if (!result.didCancel && result.assets?.length > 0) {
+                const uri = result.assets[0].uri!;
+                const compressed = await compressAndResizeImage(uri);
+                handelImage(compressed.uri);
             }
         } catch (error) {
             console.error('Camera Error:', error);
         }
     };
-const Gallery = async () => {
+
+    // 🖼️ GALLERY
+    const Gallery = async () => {
         try {
-            const response = await ImagePicker.openPicker({
-                width: 300,
-                height: 400,
-                cropping: true,
+            const result = await launchImageLibrary({
+                mediaType: 'photo',
+                selectionLimit: 1,
+                quality: 0.8,
             });
 
-            // const imageBase64 = await imageToBase64(response.path);
-            // console.log('here img base64', imageBase64)
-            const compressedImage = await compressAndResizeImage(response.path);
-            handelImage(compressedImage.uri)
+            if (!result.didCancel && result.assets?.length > 0) {
+                const uri = result.assets[0].uri!;
+                const compressed = await compressAndResizeImage(uri);
+                handelImage(compressed.uri);
+            }
         } catch (error) {
             console.log('Image picking error:', error);
         }
-    }
+    };
 
 
 
 
-  return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-    <Text style={styles.imgcontainer}>{title}</Text>
-    <TouchableOpacity onPress={Camera}>
-        <Icon style={styles.icon} color="black" name="camera" size={responsiveHeight(4)} />
-    </TouchableOpacity>
+    return (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={styles.imgcontainer}>{title}</Text>
+            <TouchableOpacity onPress={Camera}>
+                <Icon style={styles.icon} color="black" name="camera" size={responsiveHeight(4)} />
+            </TouchableOpacity>
 
-    <TouchableOpacity onPress={Gallery}>
-        <Icon style={styles.icon} color="black" name="view-gallery" size={responsiveHeight(4)} />
-    </TouchableOpacity>
- 
-</View>
-  )
+            <TouchableOpacity onPress={Gallery}>
+                <Icon style={styles.icon} color="black" name="view-gallery" size={responsiveHeight(4)} />
+            </TouchableOpacity>
+
+        </View>
+    )
 }
 
 export default CustomImagePicker
 
-const styles=StyleSheet.create({
-  imgcontainer:{
-        fontSize: responsiveFontSize(2.5), marginVertical:responsiveHeight(1.3),
-        marginHorizontal: responsiveHeight(1.2),color: "#333",fontWeight:"500"
+const styles = StyleSheet.create({
+    imgcontainer: {
+        fontSize: responsiveFontSize(2.5), marginVertical: responsiveHeight(1.3),
+        marginHorizontal: responsiveHeight(1.2), color: "#333", fontWeight: "500"
     },
-    selectedimgcontainer:{
+    selectedimgcontainer: {
         justifyContent: "center", alignItems: "center", marginBottom: responsiveHeight(1)
     },
-    selectedimg:{
-        width: responsiveWidth(25), height: responsiveHeight(11), marginLeft:responsiveHeight(1) 
+    selectedimg: {
+        width: responsiveWidth(25), height: responsiveHeight(11), marginLeft: responsiveHeight(1)
     },
     icon: {
         marginRight: responsiveHeight(1),
